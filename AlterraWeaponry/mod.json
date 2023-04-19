@@ -1,0 +1,19 @@
+{
+  "Id": "VELDsAlterraWeaponry",
+  "DisplayName": "Alterra® Weaponry™",
+  "Author": "V E L D (VELD-Dev)",
+  "Version": "1.0.3",
+  "Dependecies": [],
+  "VersionDependencies": {
+    "SMLHelper": "2.14.1"
+  },
+  "LoadBefore": [],
+  "LoadAfter": [],
+  "Enable": true,
+  "Game": "BelowZero",
+  "AssemblyName": "AlterraWeaponry.dll",
+  "NitroxCompat": true,
+  "VersionChecker": {
+    "LatestVersionURL": "https://raw.githubusercontent.com/VELD-Dev/AlterraWeaponry/master/mod.json"
+  }
+}
