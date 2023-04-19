@@ -16,7 +16,7 @@ public class Main : BaseUnityPlugin
 
 
     // STORY GOALS
-    internal static StoryGoal AWPresentationGoal = new("Goal_AWPresentation", Story.GoalType.PDA, 8f);
+    internal static StoryGoal AWPresentationGoal = new("Log_PDA_Goal_AWPresentation", Story.GoalType.PDA, 8f) { playInCreative = true, playInCinematics = false };
 
 
     // PATHS
@@ -31,6 +31,8 @@ public class Main : BaseUnityPlugin
         logger.LogInfo($"{modName} {modVers} harmony patched.");
         RegisterPDALogs();
         logger.LogInfo($"{modName} {modVers} PDA logs registered.");
+        RegisterPDAEncyEntries();
+        logger.LogInfo($"{modName} {modVers} PDA encyclopedia entries registered.");
 
         Coal coal = new();
         BlackPowder blackPowder = new();
@@ -47,9 +49,10 @@ public class Main : BaseUnityPlugin
     private static void RegisterPDALogs()
     {
         // Presentation PDA log "Hello xenoworker 91802..."
-        CustomSoundHandler.RegisterCustomSound("Goal_AWPresentation", Path.Combine(AssetsLocation, "xenoworx_pda_presentation.mp3"), AudioUtils.BusPaths.PDAVoice);
+        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_AWPresentation", Path.Combine(AssetsLocation, "xenoworx_pda_presentation.mp3"), AudioUtils.BusPaths.PDAVoice);
         FMODAsset presentation = ScriptableObject.CreateInstance<FMODAsset>();
-        presentation.path = "Goal_AWPresentation";
+        presentation.path = "Log_PDA_Goal_AWPresentation";
+        presentation.id = "Log_PDA_Goal_AWPresentation";
         PDALogHandler.AddCustomEntry(
             AWPresentationGoal.key,
             "Subtitles_AWPresentation",
@@ -57,13 +60,19 @@ public class Main : BaseUnityPlugin
         );
 
         // First lethal weapon PDA log "A lethal weapon have been detected into your inventory..."
-        CustomSoundHandler.RegisterCustomSound("Goal_FirstLethal", Path.Combine(AssetsLocation, "first_lethal_weapon_message.ogg"), AudioUtils.BusPaths.PDAVoice);
+        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_FirstLethal", Path.Combine(AssetsLocation, "first_lethal_weapon_message.ogg"), AudioUtils.BusPaths.PDAVoice);
         FMODAsset firstLethal = ScriptableObject.CreateInstance<FMODAsset>();
-        firstLethal.path = "Goal_FirstLethal";
+        firstLethal.path = "Log_PDA_Goal_FirstLethal";
+        firstLethal.id = "Log_PDA_Goal_FirstLethal";
         PDALogHandler.AddCustomEntry(
-            "Goal_FirstLethal",
+            "Log_PDA_Goal_FirstLethal",
             "Subtitles_AWFirstLethal",
             sound: firstLethal
         );
+    }
+
+    private static void RegisterPDAEncyEntries()
+    {
+
     }
 }

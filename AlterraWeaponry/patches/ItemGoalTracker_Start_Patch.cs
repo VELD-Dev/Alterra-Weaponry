@@ -26,7 +26,9 @@ internal class ItemGoalTracker_Start_Patch
             {
                 techType = techType,
                 goalType = Story.GoalType.PDA,
-                key = "Goal_FirstLethal"
+                key = "Log_PDA_Goal_FirstLethal",
+                playInCreative = true,
+                playInCinematics = false,
             };
 
             goals = goals.AddItem(goal).ToArray();
