@@ -16,7 +16,7 @@ public class Main : BaseUnityPlugin
 
 
     // STORY GOALS
-    internal static StoryGoal AWPresentationGoal = new("Log_PDA_Goal_AWPresentation", Story.GoalType.PDA, 8f) { playInCreative = true, playInCinematics = false };
+    internal static StoryGoal AWPresentationGoal = new("Log_PDA_Goal_AWPresentation", Story.GoalType.PDA, 0f) { playInCreative = true, playInCinematics = false, delay = 8f };
 
 
     // PATHS
@@ -49,7 +49,7 @@ public class Main : BaseUnityPlugin
     private static void RegisterPDALogs()
     {
         // Presentation PDA log "Hello xenoworker 91802..."
-        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_AWPresentation", Path.Combine(AssetsLocation, "xenoworx_pda_presentation.mp3"), AudioUtils.BusPaths.PDAVoice);
+        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_AWPresentation", Path.Combine(AssetsLocation, "pwa_presentation.ogg"), AudioUtils.BusPaths.PDAVoice);
         FMODAsset presentation = ScriptableObject.CreateInstance<FMODAsset>();
         presentation.path = "Log_PDA_Goal_AWPresentation";
         presentation.id = "Log_PDA_Goal_AWPresentation";
