@@ -60,7 +60,7 @@ public class Main : BaseUnityPlugin
         );
 
         // First lethal weapon PDA log "A lethal weapon have been detected into your inventory..."
-        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_FirstLethal", Path.Combine(AssetsLocation, "first_lethal_weapon_message.ogg"), AudioUtils.BusPaths.PDAVoice);
+        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_FirstLethal", Path.Combine(AssetsLocation, "first_lethal_message.ogg"), AudioUtils.BusPaths.PDAVoice);
         FMODAsset firstLethal = ScriptableObject.CreateInstance<FMODAsset>();
         firstLethal.path = "Log_PDA_Goal_FirstLethal";
         firstLethal.id = "Log_PDA_Goal_FirstLethal";
