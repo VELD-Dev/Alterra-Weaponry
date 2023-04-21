@@ -39,6 +39,7 @@ global using Subnautica;
 global using Unity;
 global using UnityEngine;
 global using UnityEditor;
+global using UnityEngine.Events;
 
 // LOCAL
 global using VELD.AlterraWeaponry.items;

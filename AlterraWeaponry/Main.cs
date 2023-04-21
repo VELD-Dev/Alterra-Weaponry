@@ -25,24 +25,43 @@ public class Main : BaseUnityPlugin
         logger = Logger;
         logger.LogInfo($"{modName} {modVers} started patching.");
         harmony.PatchAll();
-        //logger.LogInfo($"{modName} {modVers} harmony patched.");
-        //RegisterPDALogs();
-        //logger.LogInfo($"{modName} {modVers} PDA logs registered.");
-        RegisterPDAEncyEntries();
-        logger.LogInfo($"{modName} {modVers} PDA encyclopedia entries registered.");
+        logger.LogInfo($"{modName} {modVers} harmony patched.");
 
         Coal coal = new();
         BlackPowder blackPowder = new();
         ExplosiveTorpedo explosiveTorpedo = new();
+        PrawnSelfDefenseModule prawnSelfDefenseModule = new();
+
         coal.Patch();
         blackPowder.Patch();
         explosiveTorpedo.Patch();
+        prawnSelfDefenseModule.Patch();
+
         logger.LogInfo($"{modName} {modVers} items registered.");
 
         LanguagesHandler.LanguagePatch();
         logger.LogInfo($"{modName} {modVers} languages lines patched.");
 
+        RegisterPDAEncyEntries();
+        logger.LogInfo($"{modName} {modVers} PDA encyclopedia entries registered.");
+        RegisterPDALogs();
+        logger.LogInfo($"{modName} {modVers} PDA logs registered.");
+
     }
+
+    private void Update()
+    {
+        if(UnityInput.Current.GetKeyDown(KeyCode.P))
+        {
+            logger.LogInfo("Should play audio.");
+            GameObject cameraObject = Camera.main.gameObject;
+            AudioSource audioSource = cameraObject.GetComponent<AudioSource>();
+            audioSource.clip = Main.assets.LoadAsset<AudioClip>("AudioClip.PWAPresentation");
+            audioSource.Play();
+            logger.LogInfo("Should have played an audio.");
+        }
+    }
+
     private static void RegisterPDALogs()
     {
         // Load audio clips
@@ -78,6 +97,14 @@ public class Main : BaseUnityPlugin
 
     private static void RegisterPDAEncyEntries()
     {
-
+        // Register AWModInfo entry
+        PDAEncyclopediaHandler.AddCustomEntry(new()
+        {
+            key = "Ency_AWModInfo",
+            kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
+            nodes = new[] { "Meta" },
+            path = "Meta/AWModInfo",
+            unlocked = true,
+        });
     }
 }

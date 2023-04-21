@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace VELD.AlterraWeaponry.items;
 
-internal class ExplosiveTorpedo : Craftable
+public class PrawnSelfDefenseModule : Equipable
 {
     public static GameObject prefab;
     public static TechType techType { get; private set; } = 0;
 
-    public ExplosiveTorpedo() : base("ExplosiveTorpedo", "ExplosiveTorpedo", "Tooltip_ExplosiveTorpedo")
+    public PrawnSelfDefenseModule() : base("PrawnSelfDefenseModule", "PrawnSelfDefenseModule", "Tooltip_PrawnSelfDefenseModule")
     {
         OnFinishedPatching += () =>
         {
@@ -21,34 +21,38 @@ internal class ExplosiveTorpedo : Craftable
     }
 
     public override TechCategory CategoryForPDA => TechCategory.VehicleUpgrades;
-    public override TechType RequiredForUnlock => TechType.ExosuitTorpedoArmModule;
     public override float CraftingTime => 3f;
+    public override EquipmentType EquipmentType => EquipmentType.ExosuitModule;
     public override CraftTree.Type FabricatorType => CraftTree.Type.Fabricator;
+    public override int FragmentsToScan => 1;
     public override TechGroup GroupForPDA => TechGroup.VehicleUpgrades;
+    public override QuickSlotType QuickSlotType => QuickSlotType.Chargeable;
+    public override TechType RequiredForUnlock => TechType.SeaTruckUpgradePerimeterDefense;
     public override Vector2int SizeInInventory => new(1, 1);
     public override string[] StepsToFabricatorTab => new string[] { "Upgrades", "ExosuitUpgrades" };
-    public override string DiscoverMessage => "Discover_LethalWeapon";
     protected override RecipeData GetBlueprintRecipe()
     {
         return new()
         {
-            craftAmount = 2,
+            craftAmount = 1,
             Ingredients = new()
             {
-                new(BlackPowder.techType, 2),
-                new(TechType.Titanium, 1),
+                new(TechType.AdvancedWiringKit, 1),
+                new(TechType.AluminumOxide, 2),
+                new(TechType.PowerCell, 2),
+                new(TechType.Polyaniline, 1)
             }
         };
     }
     protected override Sprite GetItemSprite()
     {
-        return Main.assets.LoadAsset<Sprite>("Sprite.ExplosiveTorpedo");
+        return Main.assets.LoadAsset<Sprite>("Sprite.PrawnSelfDefenseModule");
     }
     public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
     {
         if (prefab == null)
         {
-            CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.WhirlpoolTorpedo);
+            CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.SeaTruckUpgradePerimeterDefense);
             yield return task;
 
             prefab = GameObject.Instantiate(task.GetResult());

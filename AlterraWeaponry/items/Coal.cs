@@ -40,7 +40,7 @@ internal class Coal : Craftable
     }
     protected override Sprite GetItemSprite()
     {
-        return Main.assets.LoadAsset<Sprite>("Coal");
+        return Main.assets.LoadAsset<Sprite>("Sprite.Coal");
     }
     public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
     {

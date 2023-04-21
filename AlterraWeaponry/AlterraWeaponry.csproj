@@ -84,6 +84,10 @@
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.InputModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.PhysicsModule">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
@@ -92,6 +96,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="items\PrawnSelfDefenseModule.cs" />
     <Compile Include="patches\ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch.cs" />
     <Compile Include="patches\SeamothTorpedo_OnEnergyDepleted_Patch.cs" />
     <Compile Include="utils\ExplosiveTorpedoInitializer.cs" />
