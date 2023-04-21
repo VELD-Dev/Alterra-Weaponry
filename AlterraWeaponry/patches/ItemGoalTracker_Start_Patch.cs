@@ -10,7 +10,7 @@ namespace VELD.AlterraWeaponry.patches;
 internal class ItemGoalTracker_Start_Patch
 {
     [HarmonyPrefix]
-    [HarmonyPatch("Start")]
+    [HarmonyPatch(nameof(ItemGoalTracker.Start))]
     public static void Start(ItemGoalTracker __instance)
     {
         List<TechType> techTypes = new()

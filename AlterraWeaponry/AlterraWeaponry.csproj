@@ -42,6 +42,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
+    <Reference Include="Assembly-CSharp_publicized">
+      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
+    </Reference>
     <Reference Include="BepInEx">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\core\BepInEx.dll</HintPath>
     </Reference>
@@ -71,6 +74,10 @@
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.AudioModule">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
     </Reference>
@@ -85,6 +92,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="patches\ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch.cs" />
+    <Compile Include="patches\SeamothTorpedo_OnEnergyDepleted_Patch.cs" />
+    <Compile Include="utils\ExplosiveTorpedoInitializer.cs" />
+    <Compile Include="behaviours\TorpedoExplosionBehaviour.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="items\BlackPowder.cs" />
     <Compile Include="items\Coal.cs" />
@@ -92,12 +103,11 @@
     <Compile Include="Main.cs" />
     <Compile Include="patches\ItemGoalTracker_Start_Patch.cs" />
     <Compile Include="patches\uGUISceneLoading_End_Patch.cs" />
+    <Compile Include="patches\Vehicle_Awake_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\LanguagesHandler.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="behaviours\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="assets\Coal.png" />
     <Content Include="assets\ExplosiveTorpedo.png" />
@@ -114,10 +124,8 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry"
-mkdir "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\assets"
 copy /Y "$(TargetPath)" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"
-copy /Y "$(ProjectDir)\mod.json" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\mod.json"
-copy /Y "$(ProjectDir)\assets\" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\assets\"
-copy /Y "$(ProjectDir)\Localizations.xml" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\Localizations.xml"</PostBuildEvent>
+copy /Y "$(ProjectDir)\alterraweaponry.assets" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"
+copy /Y "$(ProjectDir)\Localizations.xml" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

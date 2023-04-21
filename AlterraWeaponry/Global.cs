@@ -14,7 +14,6 @@ global using BepInEx;
 global using BepInEx.Bootstrap;
 global using BepInEx.Configuration;
 global using BepInEx.Logging;
-global using UnityEngine;
 global using SMLHelper.V2.Assets;
 global using SMLHelper.V2.Commands;
 global using SMLHelper.V2.Crafting;
@@ -37,8 +36,12 @@ global using HarmonyLib.Public.Patching;
 global using HarmonyLib.Tools;
 global using Story;
 global using Subnautica;
+global using Unity;
+global using UnityEngine;
+global using UnityEditor;
 
 // LOCAL
 global using VELD.AlterraWeaponry.items;
 global using VELD.AlterraWeaponry.patches;
 global using VELD.AlterraWeaponry.utils;
+global using VELD.AlterraWeaponry.behaviours;

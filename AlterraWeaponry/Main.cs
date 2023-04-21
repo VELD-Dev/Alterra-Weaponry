@@ -1,6 +1,4 @@
-﻿using VELD.AlterraWeaponry.items;
-
-namespace VELD.AlterraWeaponry;
+﻿namespace VELD.AlterraWeaponry;
 
 [BepInPlugin(modGUID, modName, modVers)]
 public class Main : BaseUnityPlugin
@@ -20,7 +18,7 @@ public class Main : BaseUnityPlugin
 
 
     // PATHS
-    public static readonly string AssetsLocation = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "assets");
+    public static readonly AssetBundle assets = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "alterraweaponry.assets"));
 
 
     private void Awake()
@@ -28,9 +26,9 @@ public class Main : BaseUnityPlugin
         logger = Logger;
         logger.LogInfo($"{modName} {modVers} started patching.");
         harmony.PatchAll();
-        logger.LogInfo($"{modName} {modVers} harmony patched.");
-        RegisterPDALogs();
-        logger.LogInfo($"{modName} {modVers} PDA logs registered.");
+        //logger.LogInfo($"{modName} {modVers} harmony patched.");
+        //RegisterPDALogs();
+        //logger.LogInfo($"{modName} {modVers} PDA logs registered.");
         RegisterPDAEncyEntries();
         logger.LogInfo($"{modName} {modVers} PDA encyclopedia entries registered.");
 
@@ -48,11 +46,19 @@ public class Main : BaseUnityPlugin
     }
     private static void RegisterPDALogs()
     {
+        // Load audio clips
+        logger.LogInfo($"{modName} {modVers} Loading audio clips...");
+        AudioClip AWPresentationAudioClip = assets.LoadAsset<AudioClip>("pwa_presentation_message");
+        AudioClip AWFirstLethalAudioClip = assets.LoadAsset<AudioClip>("first_lethal_message");
+        logger.LogInfo($"{modName} {modVers} Audio clips loaded!");
+
+        logger.LogInfo($"{modName} {modVers} Registering PDA Logs...");
+
         // Presentation PDA log "Hello xenoworker 91802..."
-        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_AWPresentation", Path.Combine(AssetsLocation, "pwa_presentation.ogg"), AudioUtils.BusPaths.PDAVoice);
+        CustomSoundHandler.RegisterCustomSound(AWPresentationGoal.key, AWPresentationAudioClip, AudioUtils.BusPaths.PDAVoice);
         FMODAsset presentation = ScriptableObject.CreateInstance<FMODAsset>();
-        presentation.path = "Log_PDA_Goal_AWPresentation";
-        presentation.id = "Log_PDA_Goal_AWPresentation";
+        presentation.path = AWPresentationGoal.key;
+        presentation.id = AWPresentationGoal.key;
         PDALogHandler.AddCustomEntry(
             AWPresentationGoal.key,
             "Subtitles_AWPresentation",
@@ -60,7 +66,7 @@ public class Main : BaseUnityPlugin
         );
 
         // First lethal weapon PDA log "A lethal weapon have been detected into your inventory..."
-        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_FirstLethal", Path.Combine(AssetsLocation, "first_lethal_message.ogg"), AudioUtils.BusPaths.PDAVoice);
+        CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_FirstLethal", AWFirstLethalAudioClip, AudioUtils.BusPaths.PDAVoice);
         FMODAsset firstLethal = ScriptableObject.CreateInstance<FMODAsset>();
         firstLethal.path = "Log_PDA_Goal_FirstLethal";
         firstLethal.id = "Log_PDA_Goal_FirstLethal";
