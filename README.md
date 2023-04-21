@@ -27,9 +27,15 @@ Main weapons:
 - **Advanced Refractor Lu86K** (There's an encyclopedia entry explaining what it is)
 
 ## Credits
-###Softwares used:  
+### Softwares used:  
 - **Visual Studio 2022**: Programming  
 - **[Text Reader Pro (English/Ivy)](https://textreader.pro/)**: Voice of the PWA.  
+
+### Dependencies
+- **SMLHelper 2.14.1**
+- **BepInEx** (Latest)
+
+This C# project is using **.NET 4.7.2** and **C# 11.0**.
 
 ###Ultra Mega Super Special Thanks to:
 - **EldritchCarMaker** for learning me how to mod basically, and giving me some advices for the PRAWN Self Defense module
