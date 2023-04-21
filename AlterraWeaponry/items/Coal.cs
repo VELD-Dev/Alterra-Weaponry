@@ -25,7 +25,7 @@ internal class Coal : Craftable
     public override TechGroup GroupForPDA => TechGroup.Resources;
     public override Vector2int SizeInInventory => new(1, 1);
     public override float CraftingTime => 3f;
-    public override TechType RequiredForUnlock => TechType.CreepvinePiece;
+    public override bool UnlockedAtStart => true;
     public override string[] StepsToFabricatorTab => new string[] { "Resources", "BasicMaterials" };
     protected override RecipeData GetBlueprintRecipe()
     {
