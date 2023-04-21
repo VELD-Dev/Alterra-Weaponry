@@ -30,6 +30,7 @@ Main weapons:
 ### Softwares used:  
 - **Visual Studio 2022**: Programming  
 - **[Text Reader Pro (English/Ivy)](https://textreader.pro/)**: Voice of the PWA.  
+- **dnSpy**: Understanding and searching for nerd stuff
 - **Unity 2019.4.36f1**: Bundling the assets
 
 ### Dependencies
