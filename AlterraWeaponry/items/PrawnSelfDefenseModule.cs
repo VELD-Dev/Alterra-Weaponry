@@ -10,6 +10,8 @@ namespace VELD.AlterraWeaponry.items;
 public class PrawnSelfDefenseModule : Equipable
 {
     public static GameObject prefab;
+    public static float maxCharge = 10f;
+    public static float energyCost = 5f;
     public static TechType techType { get; private set; } = 0;
 
     public PrawnSelfDefenseModule() : base("PrawnSelfDefenseModule", "PrawnSelfDefenseModule", "Tooltip_PrawnSelfDefenseModule")

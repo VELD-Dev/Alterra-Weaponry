@@ -100,7 +100,10 @@
     <Compile Include="behaviours\ZapFunctionalityBehaviour.cs" />
     <Compile Include="items\PrawnSelfDefenseModule.cs" />
     <Compile Include="patches\ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch.cs" />
+    <Compile Include="patches\GameSettings_SaveAsync_Patch.cs" />
     <Compile Include="patches\SeamothTorpedo_OnEnergyDepleted_Patch.cs" />
+    <Compile Include="patches\Vehicle_ChargeModule_Patch.cs" />
+    <Compile Include="patches\Vehicle_GetSlotCharge_Patch.cs" />
     <Compile Include="patches\Vehicle_OnUpgradeModuleChange_Patch.cs" />
     <Compile Include="patches\Vehicle_OnUpgradeModuleUse_Patch.cs" />
     <Compile Include="utils\ExplosiveTorpedoInitializer.cs" />
