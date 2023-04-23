@@ -96,9 +96,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="behaviours\CustomTriggerEventAssigner.cs" />
+    <Compile Include="behaviours\ZapFunctionalityBehaviour.cs" />
     <Compile Include="items\PrawnSelfDefenseModule.cs" />
     <Compile Include="patches\ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch.cs" />
     <Compile Include="patches\SeamothTorpedo_OnEnergyDepleted_Patch.cs" />
+    <Compile Include="patches\Vehicle_OnUpgradeModuleChange_Patch.cs" />
+    <Compile Include="patches\Vehicle_OnUpgradeModuleUse_Patch.cs" />
     <Compile Include="utils\ExplosiveTorpedoInitializer.cs" />
     <Compile Include="behaviours\TorpedoExplosionBehaviour.cs" />
     <Compile Include="Global.cs" />
