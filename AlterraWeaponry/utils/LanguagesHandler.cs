@@ -1,6 +1,4 @@
-﻿
-
-namespace VELD.AlterraWeaponry.utils
+﻿namespace VELD.AlterraWeaponry.utils
 {
     namespace LocalizationHandler
     {

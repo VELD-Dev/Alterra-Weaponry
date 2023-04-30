@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.patches;
 
 [HarmonyPatch(typeof(uGUI_SceneLoading))]
 public class uGUISceneLoading_End_Patch

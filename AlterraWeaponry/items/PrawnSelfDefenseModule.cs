@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VELD.AlterraWeaponry.items;
+﻿namespace VELD.AlterraWeaponry.items;
 
 public class PrawnSelfDefenseModule : Equipable
 {
     public static GameObject prefab;
     public static float maxCharge = 10f;
     public static float energyCost = 5f;
+    public static float cooldown = 5f;
     public static TechType techType { get; private set; } = 0;
 
     public PrawnSelfDefenseModule() : base("PrawnSelfDefenseModule", "PrawnSelfDefenseModule", "Tooltip_PrawnSelfDefenseModule")

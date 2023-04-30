@@ -12,10 +12,10 @@ public class Main : BaseUnityPlugin
     private static readonly Harmony harmony = new(modGUID);
     public static ManualLogSource logger;
 
-
     // STORY GOALS
+#if BZ
     internal static StoryGoal AWPresentationGoal = new("Log_PDA_Goal_AWPresentation", Story.GoalType.PDA, 0f) { playInCreative = true, playInCinematics = false, delay = 8f };
-
+#endif
 
     public static readonly AssetBundle assets = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "alterraweaponry.assets"));
 
@@ -66,13 +66,16 @@ public class Main : BaseUnityPlugin
     {
         // Load audio clips
         logger.LogInfo($"{modName} {modVers} Loading audio clips...");
+#if BZ
         AudioClip AWPresentationAudioClip = assets.LoadAsset<AudioClip>("pwa_presentation_message");
         AudioClip AWFirstLethalAudioClip = assets.LoadAsset<AudioClip>("first_lethal_message");
+#endif
         logger.LogInfo($"{modName} {modVers} Audio clips loaded!");
 
         logger.LogInfo($"{modName} {modVers} Registering PDA Logs...");
 
         // Presentation PDA log "Hello xenoworker 91802..."
+#if BZ
         CustomSoundHandler.RegisterCustomSound(AWPresentationGoal.key, AWPresentationAudioClip, AudioUtils.BusPaths.PDAVoice);
         FMODAsset presentation = ScriptableObject.CreateInstance<FMODAsset>();
         presentation.path = AWPresentationGoal.key;
@@ -82,8 +85,10 @@ public class Main : BaseUnityPlugin
             "Subtitles_AWPresentation",
             sound: presentation
         );
+#endif
 
-        // First lethal weapon PDA log "A lethal weapon have been detected into your inventory..."
+// First lethal weapon PDA log "A lethal weapon have been detected into your inventory..."
+#if BZ
         CustomSoundHandler.RegisterCustomSound("Log_PDA_Goal_FirstLethal", AWFirstLethalAudioClip, AudioUtils.BusPaths.PDAVoice);
         FMODAsset firstLethal = ScriptableObject.CreateInstance<FMODAsset>();
         firstLethal.path = "Log_PDA_Goal_FirstLethal";
@@ -93,6 +98,7 @@ public class Main : BaseUnityPlugin
             "Subtitles_AWFirstLethal",
             sound: firstLethal
         );
+#endif
     }
 
     private static void RegisterPDAEncyEntries()
@@ -100,11 +106,47 @@ public class Main : BaseUnityPlugin
         // Register AWModInfo entry
         PDAEncyclopediaHandler.AddCustomEntry(new()
         {
-            key = "Ency_AWModInfo",
+            key = "AWModInfo",
             kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
             nodes = new[] { "Meta" },
-            path = "Meta/AWModInfo",
+            path = "Meta",
             unlocked = true,
         });
+
+        // Explosive torpedoes entry
+#if BZ
+        PDAEncyclopediaHandler.AddCustomEntry(new()
+        {
+            key = "ExplosiveTorpedo",
+            kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
+            nodes = new[] { "Tech", "Weaponry" },
+            path = "Tech/Weaponry",
+            unlocked = false,
+        });
+#endif
+
+        // Prawn laser arm entry
+#if BZ
+        PDAEncyclopediaHandler.AddCustomEntry(new()
+        {
+            key = "PrawnLaserArm",
+            kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
+            nodes = new[] { "Tech", "Weaponry" },
+            path = "Tech/Weaponry",
+            unlocked = false,
+        });
+#endif
+
+        // Prawn Self Defense Module
+#if BZ
+        PDAEncyclopediaHandler.AddCustomEntry(new()
+        {
+            key = "PrawnDefensePerimeter",
+            kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
+            nodes = new[] { "Tech", "Modules" },
+            path = "Tech/Modules",
+            unlocked = false,
+        });
+#endif
     }
 }

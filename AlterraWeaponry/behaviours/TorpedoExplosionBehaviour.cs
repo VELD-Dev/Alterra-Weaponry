@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VELD.AlterraWeaponry.behaviours;
+﻿namespace VELD.AlterraWeaponry.behaviours;
 
 public class TorpedoExplosionBehaviour : MonoBehaviour
 {
     public void Start()
     {
         DamageSystem.RadiusDamage(250f, base.gameObject.transform.position, 5f, DamageType.Explosive, base.gameObject);
-        Utils.PlayOneShotPS(new VFXMeteor().impactPrefab, base.gameObject.transform.position, base.gameObject.transform.rotation, null);
+#if BZ
+        Utils.PlayOneShotPS(GameObject.Instantiate(new VFXMeteor().gameObject).GetComponent<VFXMeteor>().impactPrefab, base.gameObject.transform.position, base.gameObject.transform.rotation, null);
+#else
+        Utils.PlayOneShotPS(GameObject.Instantiate(new LavaLizard().gameObject).GetComponent<LavaLiazardRangedAttack>().attackStartFXcontrol.emitters[0].fx, base.gameObject.transform.position, base.gameObject.transform.rotation, null);
+#endif
         UnityEngine.Object.Destroy(base.gameObject);
     }
 

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.patches;
 
 [HarmonyPatch(typeof(Vehicle))]
 public class Vehicle_OnUpgradeModuleUse_Patch
@@ -24,7 +18,7 @@ public class Vehicle_OnUpgradeModuleUse_Patch
             if (!__instance.TryGetComponent(out ZapFunctionalityBehaviour defenseMono))
                 return;
             defenseMono.Zap(__instance, slotID);
-            num = ZapFunctionalityBehaviour.ZapCooldown;
+            num = PrawnSelfDefenseModule.cooldown;
         }
         if (flag)
         {

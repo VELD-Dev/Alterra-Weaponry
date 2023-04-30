@@ -1,4 +1,5 @@
 ﻿global using System;
+global using System.Collections;
 global using System.Collections.Generic;
 global using System.Linq;
 global using System.Text;
@@ -40,6 +41,9 @@ global using Unity;
 global using UnityEngine;
 global using UnityEditor;
 global using UnityEngine.Events;
+global using UWE;
+global using UWE.Timeline;
+global using UWEScript;
 
 // LOCAL
 global using VELD.AlterraWeaponry.items;

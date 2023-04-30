@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.patches;
 
 [HarmonyPatch(typeof(ItemGoalTracker))]
 internal class ItemGoalTracker_Start_Patch
@@ -33,6 +27,19 @@ internal class ItemGoalTracker_Start_Patch
 
             goals = goals.AddItem(goal).ToArray();
         }
+
+        foreach (TechType techType in techTypes)
+        {
+            var goal = new ItemGoal()
+            {
+                techType = techType,
+                goalType = Story.GoalType.Encyclopedia,
+                key = $"Ency_PDA_Goal_{nameof(techType)}",
+                playInCreative = true,
+                playInCinematics = false,
+            };
+        }
+
         __instance.goalData.goals = goals;
     }
 }

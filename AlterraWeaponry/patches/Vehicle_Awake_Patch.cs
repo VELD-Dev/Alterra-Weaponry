@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using VELD.AlterraWeaponry.behaviours;
-
-namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.patches;
 
 [HarmonyPatch(typeof(Vehicle))]
 public class Vehicle_Awake_Patch // Thanks to Grimm The Second !

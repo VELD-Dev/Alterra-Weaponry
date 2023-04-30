@@ -7,14 +7,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlterraWeaponry", "AlterraW
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Below Zero|Any CPU = Below Zero|Any CPU
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		Subnautica|Any CPU = Subnautica|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{63FE731A-D0D0-4971-9B5D-F21A11D77324}.Below Zero|Any CPU.ActiveCfg = BZ|Any CPU
+		{63FE731A-D0D0-4971-9B5D-F21A11D77324}.Below Zero|Any CPU.Build.0 = BZ|Any CPU
 		{63FE731A-D0D0-4971-9B5D-F21A11D77324}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{63FE731A-D0D0-4971-9B5D-F21A11D77324}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63FE731A-D0D0-4971-9B5D-F21A11D77324}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63FE731A-D0D0-4971-9B5D-F21A11D77324}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63FE731A-D0D0-4971-9B5D-F21A11D77324}.Subnautica|Any CPU.ActiveCfg = SN1|Any CPU
+		{63FE731A-D0D0-4971-9B5D-F21A11D77324}.Subnautica|Any CPU.Build.0 = SN1|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
