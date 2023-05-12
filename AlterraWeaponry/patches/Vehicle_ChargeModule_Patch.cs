@@ -27,8 +27,7 @@ public class Vehicle_ChargeModule_Patch
         float num4 = maxCharge - num;
         bool flag = num3 >= num4;
         float b = flag ? Mathf.Max(0f, num4) : num3;
-        int num6;
-        float num5 = Mathf.Min(__instance.energyInterface.TotalCanProvide(out num6), b);
+        float num5 = Mathf.Min(__instance.energyInterface.TotalCanProvide(out int num6), b);
         __instance.ConsumeEnergy(num5);
         __instance.quickSlotCharge[slotID] = __instance.quickSlotCharge[slotID] + num5;
         if (__instance.quickSlotCharge[slotID] > 0f && (flag || num5 == 0f))

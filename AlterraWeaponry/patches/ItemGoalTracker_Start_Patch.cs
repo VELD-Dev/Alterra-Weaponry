@@ -13,10 +13,10 @@ internal class ItemGoalTracker_Start_Patch
             //PrawnLaserArm.TechType,
         };
 
-        var goals = __instance.goalData.goals;
+        ItemGoal[] goals = __instance.goalData.goals;
         foreach (TechType techType in techTypes)
         {
-            var goal = new ItemGoal()
+            ItemGoal goal = new ItemGoal()
             {
                 techType = techType,
                 goalType = Story.GoalType.PDA,
@@ -30,7 +30,7 @@ internal class ItemGoalTracker_Start_Patch
 
         foreach (TechType techType in techTypes)
         {
-            var goal = new ItemGoal()
+            ItemGoal goal = new ItemGoal()
             {
                 techType = techType,
                 goalType = Story.GoalType.Encyclopedia,
