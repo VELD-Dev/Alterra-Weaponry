@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.behaviours;
+﻿namespace VELD.AlterraWeaponry.Behaviours;
 
 internal class ExplosiveTorpedoInitializer // Thanks to Grimm The Second !
 {
@@ -26,7 +26,7 @@ internal class ExplosiveTorpedoInitializer // Thanks to Grimm The Second !
                 go2.GetComponent<SeamothTorpedo>().homingTorpedo = true;
                 torpedoType = new()
                 {
-                    techType = ExplosiveTorpedo.techType,
+                    techType = ExplosiveTorpedo.TechType,
                     prefab = go2
                 };
             }

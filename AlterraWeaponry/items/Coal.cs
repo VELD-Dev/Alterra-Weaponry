@@ -1,28 +1,26 @@
-﻿namespace VELD.AlterraWeaponry.items;
+﻿namespace VELD.AlterraWeaponry.Items;
 
-internal class Coal : Craftable
+internal class Coal
 {
-    public static GameObject prefab;
-    public static TechType techType { get; private set; } = 0;
+    public static string ClassID = "Coal";
+    public static TechType TechType { get; private set; } = 0;
 
-    public Coal() : base ("Coal", "Coal", "Tooltip_Coal")
+
+    public PrefabInfo Info { get; private set; }
+
+    public Coal()
     {
-        OnFinishedPatching += () =>
-        {
-            techType = TechType;
-        };
+        this.Info = PrefabInfo
+            .WithTechType(classId: ClassID, displayName: null, description: null, unlockAtStart: true, techTypeOwner: Assembly.GetExecutingAssembly())
+            .WithIcon(Main.assets.LoadAsset<Sprite>("Sprite.Coal"))
+            .WithSizeInInventory(new(1, 1));
+
+        TechType = this.Info.TechType;
     }
 
-    public override CraftTree.Type FabricatorType => CraftTree.Type.Fabricator;
-    public override TechCategory CategoryForPDA => TechCategory.BasicMaterials;
-    public override TechGroup GroupForPDA => TechGroup.Resources;
-    public override Vector2int SizeInInventory => new(1, 1);
-    public override float CraftingTime => 3f;
-    public override bool UnlockedAtStart => true;
-    public override string[] StepsToFabricatorTab => new string[] { "Resources", "BasicMaterials" };
-    protected override RecipeData GetBlueprintRecipe()
+    public void Patch()
     {
-        return new()
+        RecipeData recipe = new()
         {
             craftAmount = 4,
             Ingredients = new()
@@ -30,24 +28,17 @@ internal class Coal : Craftable
                 new(TechType.CreepvinePiece, 1)
             }
         };
+
+        CustomPrefab customPrefab = new(this.Info);
+        PrefabTemplate clone = new CloneTemplate(this.Info, TechType.Nickel);
+
+        customPrefab.SetGameObject(clone);
+        customPrefab.SetEquipment(EquipmentType.None);
+        customPrefab.SetRecipe(recipe)
+            .WithCraftingTime(4f)
+            .WithFabricatorType(CraftTree.Type.Fabricator)
+            .WithStepsToFabricatorTab("Resources", "BasicMaterials");
+
+        customPrefab.Register();
     }
-    protected override Sprite GetItemSprite()
-    {
-        return Main.assets.LoadAsset<Sprite>("Sprite.Coal");
-    }
-    public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
-    {
-        if (prefab == null)
-        {
-            CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.Titanium);
-            yield return task;
-
-            prefab = GameObject.Instantiate(task.GetResult());
-        }
-
-        GameObject go = GameObject.Instantiate(prefab);
-        gameObject.Set(go);
-    }
-
-
 }

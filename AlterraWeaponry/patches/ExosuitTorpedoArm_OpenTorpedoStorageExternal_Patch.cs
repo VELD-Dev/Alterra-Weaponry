@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(ExosuitTorpedoArm))]
 public class ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch // Thanks to Grimm The Second !
@@ -9,7 +9,7 @@ public class ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch // Thanks to Gri
     {
         __instance.container.allowedTech.AddRange(new TechType[]
         {
-            ExplosiveTorpedo.techType
+            ExplosiveTorpedo.TechType
         });
     }
 }

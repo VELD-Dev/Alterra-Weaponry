@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(Vehicle))]
 public class Vehicle_Awake_Patch // Thanks to Grimm The Second !
@@ -11,7 +11,7 @@ public class Vehicle_Awake_Patch // Thanks to Grimm The Second !
         if(flag)
         {
             TorpedoType torpedoType = Enumerable.FirstOrDefault<TorpedoType>(__instance.torpedoTypes, (TorpedoType type) => type.techType == TechType.GasTorpedo);
-            GameObject prefab = (torpedoType != null) ? torpedoType.prefab : null;
+            GameObject prefab = torpedoType?.prefab;
             ExplosiveTorpedoInitializer.InitPrefab(prefab);
         }
         __instance.torpedoTypes = __instance.torpedoTypes.ToArray().AddRangeToArray(new[]

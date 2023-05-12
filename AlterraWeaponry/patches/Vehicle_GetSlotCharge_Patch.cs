@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.Patches;
 
 
 [HarmonyPatch(typeof(Vehicle))]
@@ -20,7 +20,7 @@ internal class Vehicle_GetSlotCharge_Patch
             float maxCharge = TechData.GetMaxCharge(techType);
 
             // TEMPORARY PATCH, WAITING FOR AN SMLHELPER UPDATE
-            bool flag = techType == PrawnSelfDefenseModule.techType;
+            bool flag = techType == PrawnSelfDefenseModule.TechType;
             if (flag)
                 maxCharge = PrawnSelfDefenseModule.maxCharge;
 

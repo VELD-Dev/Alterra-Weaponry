@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(Vehicle))]
 public class Vehicle_OnUpgradeModuleUse_Patch
@@ -13,7 +13,7 @@ public class Vehicle_OnUpgradeModuleUse_Patch
 
         bool flag = true;
         float num = 0f;
-        if (techType == PrawnSelfDefenseModule.techType)
+        if (techType == PrawnSelfDefenseModule.TechType)
         {
             if (!__instance.TryGetComponent(out ZapFunctionalityBehaviour defenseMono))
                 return;

@@ -1,66 +1,71 @@
-﻿namespace VELD.AlterraWeaponry.items;
+﻿using Nautilus.Assets.PrefabTemplates;
 
-internal class BlackPowder : Craftable
+namespace VELD.AlterraWeaponry.Items;
+
+internal class BlackPowder
 {
-    public static GameObject AssetPrefab = Main.assets.LoadAsset<GameObject>("GameObject.BlackPowder");
-    public static GameObject prefab;
-    public static TechType techType { get; private set; } = 0;
+    public static string ClassID = "BlackPowder";
+    public static TechType TechType { get; private set; } = 0;
 
-    public BlackPowder() : base("BlackPowder", "BlackPowder", "Tooltip_BlackPowder")
+
+    public static GameObject AssetPrefab = Main.assets.LoadAsset<GameObject>("GameObject.BlackPowder");
+    public PrefabInfo Info { get; private set; }
+
+    public BlackPowder()
     {
-        OnFinishedPatching += () =>
-        {
-            techType = TechType;
-        };
+        SetupGameObject();
+        this.Info = PrefabInfo
+            .WithTechType(classId: ClassID, displayName: null, description: null, unlockAtStart: true, techTypeOwner: Assembly.GetExecutingAssembly())
+            .WithIcon(Main.assets.LoadAsset<Sprite>("Sprite.BlackPowder"))
+            .WithSizeInInventory(new(1, 1));
+        TechType = this.Info.TechType;
     }
-    public override TechCategory CategoryForPDA => TechCategory.AdvancedMaterials;
-    public override TechGroup GroupForPDA => TechGroup.Resources;
-    public override TechType RequiredForUnlock => Coal.techType;
-    public override float CraftingTime => 2.5f;
-    public override CraftTree.Type FabricatorType => CraftTree.Type.Fabricator;
-    public override Vector2int SizeInInventory => new(1, 1);
-    public override string[] StepsToFabricatorTab => new string[] { "Resources", "AdvancedMaterials"};
-    protected override RecipeData GetBlueprintRecipe()
+
+    public void Patch()
     {
-        return new()
+        RecipeData recipe = new()
         {
             craftAmount = 1,
             Ingredients = new()
             {
-                new(Coal.techType, 1),
+                new(Coal.TechType, 1),
                 new(TechType.Sulphur, 1),
                 new(TechType.JeweledDiskPiece, 3)
             }
         };
+
+        CustomPrefab customPrefab = new(this.Info);
+
+
+        customPrefab.SetGameObject(AssetPrefab);
+        customPrefab.SetEquipment(EquipmentType.None);
+        customPrefab.SetRecipe(recipe)
+            .WithCraftingTime(4f)
+            .WithFabricatorType(CraftTree.Type.Fabricator)
+            .WithStepsToFabricatorTab("Resources", "BasicMaterials");
+
+        customPrefab.Register();
     }
-    protected override Sprite GetItemSprite()
+
+    /// <summary>
+    /// Setup the game object
+    /// </summary>
+    /// <returns>the final version of the gameobject</returns>
+    public GameObject SetupGameObject()
     {
-        return Main.assets.LoadAsset<Sprite>("Sprite.BlackPowder");
-    }
-    public override GameObject GetGameObject()
-    {
-        bool flag = !prefab;
-        if (flag)
-        {
-            prefab = Main.assets.LoadAsset<GameObject>("GameObject.BlackPowder");
-            Pickupable pickupable = prefab.AddComponent<Pickupable>();
-            pickupable.overrideTechType = base.TechType;
-            PrefabIdentifier prefabIdentifier = prefab.AddComponent<PrefabIdentifier>();
-            prefabIdentifier.ClassId = base.ClassID;
-            prefabIdentifier.name = base.ClassID;
-            prefab.AddComponent<WorldForces>();
-            prefab.AddComponent<LargeWorldEntity>();
-            TechTag techTag = prefab.AddComponent<TechTag>();
-            techTag.type = base.TechType;
-        }
-        prefab.SetActive(true);
-        GameObject go = UnityEngine.Object.Instantiate<GameObject>(prefab);
+        Pickupable pickupable = AssetPrefab.GetComponent<Pickupable>();
+        pickupable.overrideTechType = TechType;
+
+        PrefabIdentifier prefabIdentifier = AssetPrefab.GetComponent<PrefabIdentifier>();
+        prefabIdentifier.ClassId = ClassID;
+        prefabIdentifier.name = ClassID;
+
+        TechTag techTag = AssetPrefab.GetComponent<TechTag>();
+        techTag.type = TechType;
+
+        AssetPrefab.SetActive(true);
+
+        GameObject go = UnityEngine.Object.Instantiate<GameObject>(AssetPrefab);
         return go;
-    }
-    public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
-    {
-        gameObject.Set(this.GetGameObject());
-        yield return null;
-        yield break;
     }
 }

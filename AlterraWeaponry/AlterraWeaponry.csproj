@@ -58,8 +58,8 @@
     <Reference Include="FMODUnity">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\FMODUnity.dll</HintPath>
     </Reference>
-    <Reference Include="SMLHelper">
-      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\QMods\SMLHelper_BZ\SMLHelper.dll</HintPath>
+    <Reference Include="Nautilus">
+      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -125,6 +125,7 @@
     <Compile Include="patches\Vehicle_Awake_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="utils\LanguagesHandler.cs" />
+    <Compile Include="utils\Options.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

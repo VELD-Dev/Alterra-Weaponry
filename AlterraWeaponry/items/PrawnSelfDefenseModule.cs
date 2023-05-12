@@ -1,34 +1,31 @@
-﻿namespace VELD.AlterraWeaponry.items;
+﻿namespace VELD.AlterraWeaponry.Items;
 
-public class PrawnSelfDefenseModule : Equipable
+public class PrawnSelfDefenseModule
 {
-    public static GameObject prefab;
     public static float maxCharge = 10f;
     public static float energyCost = 5f;
     public static float cooldown = 5f;
-    public static TechType techType { get; private set; } = 0;
 
-    public PrawnSelfDefenseModule() : base("PrawnSelfDefenseModule", "PrawnSelfDefenseModule", "Tooltip_PrawnSelfDefenseModule")
+    public static string ClassID = "PrawnSelfDefenseModule";
+    public static TechType TechType { get; private set; } = 0;
+
+
+    public static GameObject prefab;
+    public PrefabInfo Info { get; private set; }
+
+    public PrawnSelfDefenseModule()
     {
-        OnFinishedPatching += () =>
-        {
-            techType = TechType;
-        };
+        Info = PrefabInfo
+            .WithTechType(classId: ClassID, displayName: null, description: null, techTypeOwner: Assembly.GetExecutingAssembly())
+            .WithSizeInInventory(new(1, 1))
+            .WithIcon(Main.assets.LoadAsset<Sprite>("Sprite.PrawnSelfDefenseModule"));
+
+        TechType = this.Info.TechType;
     }
 
-    public override TechCategory CategoryForPDA => TechCategory.VehicleUpgrades;
-    public override float CraftingTime => 3f;
-    public override EquipmentType EquipmentType => EquipmentType.ExosuitModule;
-    public override CraftTree.Type FabricatorType => CraftTree.Type.Fabricator;
-    public override int FragmentsToScan => 1;
-    public override TechGroup GroupForPDA => TechGroup.VehicleUpgrades;
-    public override QuickSlotType QuickSlotType => QuickSlotType.Chargeable;
-    public override TechType RequiredForUnlock => TechType.SeaTruckUpgradePerimeterDefense;
-    public override Vector2int SizeInInventory => new(1, 1);
-    public override string[] StepsToFabricatorTab => new string[] { "Upgrades", "ExosuitUpgrades" };
-    protected override RecipeData GetBlueprintRecipe()
+    public void Patch()
     {
-        return new()
+        RecipeData recipe = new()
         {
             craftAmount = 1,
             Ingredients = new()
@@ -39,22 +36,17 @@ public class PrawnSelfDefenseModule : Equipable
                 new(TechType.Polyaniline, 1)
             }
         };
-    }
-    protected override Sprite GetItemSprite()
-    {
-        return Main.assets.LoadAsset<Sprite>("Sprite.PrawnSelfDefenseModule");
-    }
-    public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
-    {
-        if (prefab == null)
-        {
-            CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.SeaTruckUpgradePerimeterDefense);
-            yield return task;
 
-            prefab = GameObject.Instantiate(task.GetResult());
-        }
+        CustomPrefab customPrefab = new(this.Info);
+        CloneTemplate clone = new(this.Info, TechType.SeaTruckUpgradePerimeterDefense);
 
-        GameObject go = GameObject.Instantiate(prefab);
-        gameObject.Set(go);
+        customPrefab.SetGameObject(clone);
+        customPrefab.SetEquipment(EquipmentType.ExosuitModule);
+        customPrefab.SetRecipe(recipe)
+            .WithCraftingTime(3f)
+            .WithFabricatorType(CraftTree.Type.Fabricator)
+            .WithStepsToFabricatorTab("Upgrades", "ExosuitUpgrades");
+
+        customPrefab.Register();
     }
 }

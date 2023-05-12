@@ -1,4 +1,6 @@
-﻿namespace VELD.AlterraWeaponry.behaviours;
+﻿using VELD.AlterraWeaponry.Utils;
+
+namespace VELD.AlterraWeaponry.Behaviours;
 
 internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and PrimeSonic 👌
 {
@@ -39,9 +41,10 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
     private void ZapRadius(Vehicle vehicle)
     {
 
-        GameObject gameObject = Utils.SpawnZeroedAt(ElectricalDefensePrefab, vehicle.transform, false);
+        GameObject gameObject = global::Utils.SpawnZeroedAt(ElectricalDefensePrefab, vehicle.transform, false);
         ElectricalDefense defenseComponent = gameObject.GetComponent<ElectricalDefense>();
         defenseComponent.charge = this.Overcharge;
         defenseComponent.chargeScalar = this.OverchargeScalar;
+        defenseComponent.damage *= Options.dmgMultiplier;
     }
 }

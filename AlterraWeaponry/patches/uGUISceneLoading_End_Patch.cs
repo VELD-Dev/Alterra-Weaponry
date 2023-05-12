@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(uGUI_SceneLoading))]
 public class uGUISceneLoading_End_Patch

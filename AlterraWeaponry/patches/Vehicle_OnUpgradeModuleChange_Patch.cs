@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(Vehicle))]
 internal class Vehicle_OnUpgradeModuleChange_Patch
@@ -7,7 +7,7 @@ internal class Vehicle_OnUpgradeModuleChange_Patch
     [HarmonyPatch(nameof(Vehicle.OnUpgradeModuleChange))]
     public static void OnUpgradeModuleChange(TechType techType, bool added, Vehicle __instance)
     {
-        if(techType == PrawnSelfDefenseModule.techType)
+        if(techType == PrawnSelfDefenseModule.TechType)
         {
             if(added)
             {

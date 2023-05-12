@@ -1,6 +1,6 @@
 ﻿
 
-namespace VELD.AlterraWeaponry.patches;
+namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(Vehicle))]
 public class Vehicle_ChargeModule_Patch
@@ -13,14 +13,14 @@ public class Vehicle_ChargeModule_Patch
         float maxCharge = TechData.GetMaxCharge(techType);
 
         // TEMP CODE WAITING FOR SMLHELPER UPDATE
-        if(techType == PrawnSelfDefenseModule.techType)
+        if(techType == PrawnSelfDefenseModule.TechType)
             maxCharge = PrawnSelfDefenseModule.maxCharge;
 
         float num2;
         TechData.GetEnergyCost(techType, out num2);
 
         // TEMP CODE WAITING FOR SMLHELPER UPDATE
-        if (techType == PrawnSelfDefenseModule.techType)
+        if (techType == PrawnSelfDefenseModule.TechType)
             num2 = PrawnSelfDefenseModule.energyCost;
 
         float num3 = num2 * Time.deltaTime;

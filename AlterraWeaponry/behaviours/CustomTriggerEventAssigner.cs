@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.behaviours;
+﻿namespace VELD.AlterraWeaponry.Behaviours;
 
 public class CustomTriggerStoryGoalAssigner : MonoBehaviour
 {

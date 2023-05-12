@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(ItemGoalTracker))]
 internal class ItemGoalTracker_Start_Patch
@@ -9,8 +9,8 @@ internal class ItemGoalTracker_Start_Patch
     {
         List<TechType> techTypes = new()
         {
-            ExplosiveTorpedo.techType,
-            //PrawnLaserArm.techType,
+            ExplosiveTorpedo.TechType,
+            //PrawnLaserArm.TechType,
         };
 
         var goals = __instance.goalData.goals;
@@ -38,6 +38,8 @@ internal class ItemGoalTracker_Start_Patch
                 playInCreative = true,
                 playInCinematics = false,
             };
+
+            goals = goals.AddItem(goal).ToArray();
         }
 
         __instance.goalData.goals = goals;
