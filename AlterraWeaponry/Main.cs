@@ -6,7 +6,7 @@ public class Main : BaseUnityPlugin
     // MOD INFO
     private const string modName = "Alterra Weaponry";
     private const string modGUID = "com.VELD.AlterraWeaponry";
-    private const string modVers = "1.0.3";
+    private const string modVers = "1.0.5";
 
     // BepInEx/Harmony/Unity
     private static readonly Harmony harmony = new(modGUID);
@@ -16,7 +16,7 @@ public class Main : BaseUnityPlugin
     internal static StoryGoal AWPresentationGoal = new("Log_PDA_Goal_AWPresentation", Story.GoalType.PDA, 8f) { playInCreative = true, playInCinematics = false, delay = 8f };
 
     public static readonly AssetBundle assets = AssetBundle.LoadFromFile(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "alterraweaponry.assets"));
-
+    internal static Options Options { get; } = OptionsPanelHandler.RegisterModOptions<Options>();
 
     private void Awake()
     {
@@ -24,28 +24,26 @@ public class Main : BaseUnityPlugin
         logger.LogInfo($"{modName} {modVers} started patching.");
         harmony.PatchAll();
         logger.LogInfo($"{modName} {modVers} harmony patched.");
+        LanguagesHandler.LanguagePatch();
+        logger.LogInfo($"{modName} {modVers} languages lines patched.");
+        PatchPDAEncyEntries();
+        logger.LogInfo($"{modName} {modVers} PDA encyclopedia entries registered.");
+        PatchPDALogs();
+        logger.LogInfo($"{modName} {modVers} PDA logs registered.");
 
         Coal coal = new();
-        BlackPowder blackPowder = new();
-        ExplosiveTorpedo explosiveTorpedo = new();
-        PrawnSelfDefenseModule prawnSelfDefenseModule = new();
-
         coal.Patch();
+
+        BlackPowder blackPowder = new();
         blackPowder.Patch();
+
+        ExplosiveTorpedo explosiveTorpedo = new();
         explosiveTorpedo.Patch();
+
+        PrawnSelfDefenseModule prawnSelfDefenseModule = new();
         prawnSelfDefenseModule.Patch();
 
         logger.LogInfo($"{modName} {modVers} items registered.");
-
-        LanguagesHandler.LanguagePatch();
-        logger.LogInfo($"{modName} {modVers} languages lines patched.");
-
-        RegisterPDAEncyEntries();
-        logger.LogInfo($"{modName} {modVers} PDA encyclopedia entries registered.");
-        RegisterPDALogs();
-        logger.LogInfo($"{modName} {modVers} PDA logs registered.");
-        OptionsPanelHandler.RegisterModOptions<Options>();
-        logger.LogInfo($"{modName} {modVers} Options registered");
     }
 
     private void Update()
@@ -61,12 +59,12 @@ public class Main : BaseUnityPlugin
         }
     }
 
-    private static void RegisterPDALogs()
+    private static void PatchPDALogs()
     {
         // Load audio clips
         logger.LogInfo($"{modName} {modVers} Loading audio clips...");
-        AudioClip AWPresentationAudioClip = assets.LoadAsset<AudioClip>("pwa_presentation_message");
-        AudioClip AWFirstLethalAudioClip = assets.LoadAsset<AudioClip>("first_lethal_message");
+        AudioClip AWPresentationAudioClip = GameObject.Instantiate<AudioClip>(assets.LoadAsset<AudioClip>("AudioClip.PWAPresentation"));
+        AudioClip AWFirstLethalAudioClip = GameObject.Instantiate<AudioClip>(assets.LoadAsset<AudioClip>("AudioClip.FirstLethalMessage"));
         logger.LogInfo($"{modName} {modVers} Audio clips loaded!");
 
         logger.LogInfo($"{modName} {modVers} Registering PDA Logs...");
@@ -94,7 +92,7 @@ public class Main : BaseUnityPlugin
         );
     }
 
-    private static void RegisterPDAEncyEntries()
+    private static void PatchPDAEncyEntries()
     {
         // Register AWModInfo entry
         PDAHandler.AddEncyclopediaEntry(new()
@@ -131,8 +129,8 @@ public class Main : BaseUnityPlugin
         {
             key = "PrawnDefensePerimeter",
             kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
-            nodes = new[] { "Tech", "Modules" },
-            path = "Tech/Modules",
+            nodes = new[] { "Tech", "Weaponry", "Modules" },
+            path = "Tech/Weaponry/Modules",
             unlocked = false,
         });
     }

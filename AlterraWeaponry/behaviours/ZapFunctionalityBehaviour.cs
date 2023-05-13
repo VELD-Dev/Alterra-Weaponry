@@ -45,6 +45,6 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
         ElectricalDefense defenseComponent = gameObject.GetComponent<ElectricalDefense>();
         defenseComponent.charge = this.Overcharge;
         defenseComponent.chargeScalar = this.OverchargeScalar;
-        defenseComponent.damage *= Options.dmgMultiplier;
+        defenseComponent.damage *= Main.Options.dmgMultiplier;
     }
 }
