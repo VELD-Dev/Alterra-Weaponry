@@ -1,10 +1,12 @@
-﻿namespace VELD.AlterraWeaponry.Items;
+﻿using static VFXParticlesPool;
+
+namespace VELD.AlterraWeaponry.Items;
 
 public class PrawnSelfDefenseModule
 {
-    public static float maxCharge = 10f;
-    public static float energyCost = 5f;
-    public static float cooldown = 5f;
+    public const float maxCharge = 10f;
+    public const float energyCost = 5f;
+    public const float cooldown = 5f;
 
     public static string ClassID = "PrawnSelfDefenseModule";
     public static TechType TechType { get; private set; } = 0;
@@ -21,6 +23,7 @@ public class PrawnSelfDefenseModule
             .WithIcon(Main.assets.LoadAsset<Sprite>("Sprite.PrawnSelfDefenseModule"));
 
         TechType = this.Info.TechType;
+
     }
 
     public void Patch()
@@ -41,9 +44,43 @@ public class PrawnSelfDefenseModule
         CloneTemplate clone = new(this.Info, TechType.SeaTruckUpgradePerimeterDefense);
 
         customPrefab.SetGameObject(clone);
-        customPrefab.SetEquipment(EquipmentType.ExosuitModule);
+        
+        customPrefab.SetVehicleUpgradeModule(EquipmentType.ExosuitModule, QuickSlotType.Chargeable)
+            .WithEnergyCost(energyCost)
+            .WithMaxCharge(maxCharge)
+            .WithCooldown(5f)
+            .WithOnModuleAdded((Vehicle instance, int slotID) =>
+            {
+                if (!instance.gameObject.TryGetComponent(out ZapFunctionalityBehaviour defMono))
+                    instance.gameObject.EnsureComponent<ZapFunctionalityBehaviour>();
+                else
+                    Main.logger.LogWarning("For some reason, the defense mono was already existing on the prawn although the upgrade was not equipped.");
+            })
+            .WithOnModuleRemoved((Vehicle instance, int slotID) =>
+            {
+                if (instance.gameObject.TryGetComponent(out ZapFunctionalityBehaviour defMono))
+                    UnityEngine.Object.Destroy(defMono);
+                else
+                    Main.logger.LogWarning("For some reason, the defense mono was no existing on Prawn although the upgrade was equipped.");
+            })
+            .WithOnModuleUsed((Vehicle instance, int slotID, float charge, float chargeScalar) =>
+            {
+                if (!instance.gameObject.TryGetComponent(out ZapFunctionalityBehaviour defenseMono))
+                    defenseMono = instance.gameObject.EnsureComponent<ZapFunctionalityBehaviour>();
+                Main.logger.LogInfo("Zapping !");
+                try
+                {
+                    defenseMono.Zap(instance, slotID, charge, chargeScalar);
+                }
+                catch (Exception e)
+                {
+                    Main.logger.LogError($"Cannot use the defense mono.\nError:");
+                    Main.logger.LogError(e);
+                }
+                Main.logger.LogInfo("Zapped !");
+            });
         customPrefab.SetRecipe(recipe)
-            .WithCraftingTime(3f)
+            .WithCraftingTime(2.5f)
             .WithFabricatorType(CraftTree.Type.Fabricator)
             .WithStepsToFabricatorTab("Upgrades", "ExosuitUpgrades");
 

@@ -8,7 +8,7 @@ public class uGUISceneLoading_End_Patch
     public static void End(bool fade)
     {
         Main.logger.LogInfo("Triggered LoadingScene end.");
-        Main.AWPresentationGoal.Trigger();
+        //Main.AWPresentationGoal.Trigger();
         Main.logger.LogInfo("Should play or have played AWPresentationGoal.");
     }
 }

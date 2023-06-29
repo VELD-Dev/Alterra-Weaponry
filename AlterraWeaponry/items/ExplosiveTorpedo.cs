@@ -35,12 +35,6 @@ internal class ExplosiveTorpedo
 
         CustomPrefab customPrefab = new(this.Info);
         CloneTemplate clone = new(this.Info, TechType.GasTorpedo);
-        /*
-        clone.ModifyPrefab += (GameObject torpedoPrefab) =>
-        {
-            torpedoPrefab.EnsureComponent<TorpedoExplosionBehaviour>();
-        };
-        */
 
         customPrefab.SetGameObject(clone);
         customPrefab.SetEquipment(EquipmentType.None);

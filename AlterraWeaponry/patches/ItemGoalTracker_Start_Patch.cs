@@ -20,7 +20,7 @@ internal class ItemGoalTracker_Start_Patch
             {
                 techType = techType,
                 goalType = Story.GoalType.PDA,
-                key = "Log_PDA_Goal_FirstLethal",
+                key = "AWFirstLethal",
                 playInCreative = true,
                 playInCinematics = false,
             };

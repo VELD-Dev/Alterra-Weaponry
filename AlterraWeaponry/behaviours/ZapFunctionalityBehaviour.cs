@@ -23,17 +23,19 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
 
         seamothElectricalDefensePrefab = prefab.GetComponent<SeaTruckUpgrades>().electricalDefensePrefab;
     }
-    public bool Zap(Vehicle vehicle, int usedSlotID)
+    public bool Zap(Vehicle vehicle, int usedSlotID, float charge, float chargeScalar)
     {
+        Main.logger.LogInfo("Preparing the zap...");
         if (vehicle == null)
             return false;
 
-        float charge = vehicle.quickSlotCharge[usedSlotID];
-        float slotCharge = vehicle.GetSlotCharge(usedSlotID);
+        Main.logger.LogInfo("Should zap.");
         this.Overcharge = charge;
-        this.OverchargeScalar = slotCharge;
+        this.OverchargeScalar = chargeScalar;
+        Main.logger.LogInfo("Settings set, it should be zapping.");
         CoroutineHost.StartCoroutine(UpdateDefensePrefab());
 
+        Main.logger.LogInfo("Executing Zap in radius..");
         ZapRadius(vehicle);
         return true;
     }
@@ -46,5 +48,6 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
         defenseComponent.charge = this.Overcharge;
         defenseComponent.chargeScalar = this.OverchargeScalar;
         defenseComponent.damage *= Main.Options.dmgMultiplier;
+        Main.logger.LogInfo("Should have zapped !");
     }
 }

@@ -19,7 +19,6 @@ internal class BlackPowder
             .WithIcon(Main.assets.LoadAsset<Sprite>("Sprite.BlackPowder"))
             .WithSizeInInventory(new(1, 1));
         TechType = this.Info.TechType;
-        SetupGameObject();
         Main.logger.LogDebug("Loaded BlackPowder prefab info and assigned TechType");
     }
 
@@ -41,10 +40,10 @@ internal class BlackPowder
 
         CustomPrefab customPrefab = new(this.Info);
 
-        customPrefab.SetGameObject(AssetPrefab);
+        customPrefab.SetGameObject(SetupGameObject());
         customPrefab.SetEquipment(EquipmentType.None);
         customPrefab.SetRecipe(recipe)
-            .WithCraftingTime(4f)
+            .WithCraftingTime(2.5f)
             .WithFabricatorType(CraftTree.Type.Fabricator)
             .WithStepsToFabricatorTab("Resources", "BasicMaterials");
 
@@ -56,32 +55,12 @@ internal class BlackPowder
     /// <summary>
     /// Setup the game object
     /// </summary>
-    /// <returns>the final version of the gameobject</returns>
+    /// <returns>The modified asset prefab</returns>
     public GameObject SetupGameObject()
     {
         Main.logger.LogDebug("Setting up BlackPowder GameObject.");
-        Main.logger.LogDebug("Setting pickupable component.");
-        Pickupable pickupable = AssetPrefab.EnsureComponent<Pickupable>();
-        Main.logger.LogDebug("Overriding Pickupable TechType");
-        pickupable.overrideTechType = TechType;
-
-        Main.logger.LogDebug("Set up pickupable component. Now setting PrefabIdentifier");
-
-        PrefabIdentifier prefabIdentifier = AssetPrefab.EnsureComponent<PrefabIdentifier>();
-        prefabIdentifier.ClassId = ClassID;
-        prefabIdentifier.name = ClassID;
-
-        Main.logger.LogDebug("Set up PrefabIdentifier component. Now setting TechTag");
-
-        TechTag techTag = AssetPrefab.EnsureComponent<TechTag>();
-        techTag.type = TechType;
-
-        Main.logger.LogDebug("Set up TechTag component. Instantiating Object...");
-
-        AssetPrefab.SetActive(true);
-
-        GameObject go = UnityEngine.Object.Instantiate<GameObject>(AssetPrefab);
-        Main.logger.LogDebug("Object correctly instantiated. Set up Black Powder correctly");
-        return go;
+        Main.logger.LogDebug("Setting shaders.");
+        MaterialUtils.ApplySNShaders(AssetPrefab);
+        return AssetPrefab;
     }
 }

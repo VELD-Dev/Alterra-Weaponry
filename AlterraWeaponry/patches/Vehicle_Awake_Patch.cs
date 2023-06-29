@@ -7,8 +7,7 @@ public class Vehicle_Awake_Patch // Thanks to Grimm The Second !
     [HarmonyPatch(nameof(Vehicle.Awake))]
     public static void Awake(Vehicle __instance)
     {
-        bool flag = ExplosiveTorpedoInitializer.torpedoType == null;
-        if(flag)
+        if(ExplosiveTorpedoInitializer.torpedoType == null)
         {
             TorpedoType torpedoType = Enumerable.FirstOrDefault<TorpedoType>(__instance.torpedoTypes, (TorpedoType type) => type.techType == TechType.GasTorpedo);
             GameObject prefab = torpedoType?.prefab;
