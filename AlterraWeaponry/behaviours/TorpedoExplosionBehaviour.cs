@@ -10,13 +10,13 @@ public class TorpedoExplosionBehaviour : MonoBehaviour
 
     public void Start()
     {
-        DamageSystem.RadiusDamage((250f * Main.Options.dmgMultiplier), base.gameObject.transform.position, 5f, DamageType.Explosive, base.gameObject);
+        DamageSystem.RadiusDamage((250f * Main.Options.dmgMultiplier), base.gameObject.transform.position, 10f, DamageType.Explosive, base.gameObject);
 #if BELOWZERO
         global::Utils.PlayOneShotPS(detonationEffectPrefab, base.gameObject.transform.position, base.gameObject.transform.rotation, null);
 #elif SUBNAUTICA
         //global::Utils.PlayOneShotPS(GameObject.Instantiate<LavaLizard>(new LavaLizard()).GetComponent<LavaLiazardRangedAttack>().attackStartFXcontrol.emitters[0].fx, base.gameObject.transform.position, base.gameObject.transform.rotation, null);
 #endif
-        UnityEngine.Object.Destroy(base.gameObject);
+        Destroy(base.gameObject);
     }
 
     public static GameObject detonationEffectPrefab;

@@ -11,10 +11,16 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
     public float Overcharge { get; private set; }
     public float OverchargeScalar { get; private set; } 
 
+    private void Awake()
+    {
+        if(seamothElectricalDefensePrefab == null)
+            CoroutineHost.StartCoroutine(UpdateDefensePrefab());
+    }
+
     public static IEnumerator UpdateDefensePrefab()
     {
-        if (seamothElectricalDefensePrefab) yield break;
-
+        if (seamothElectricalDefensePrefab is not null) yield break;
+        Main.logger.LogDebug("Updating defense prefab for ZapFunctionalityBehaviour.ElectricalDefensePrefab.");
         var task = CraftData.GetPrefabForTechTypeAsync(TechType.SeaTruck);
         yield return task;
         var prefab = task.GetResult();
@@ -22,6 +28,7 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
         if (prefab == null) yield break;
 
         seamothElectricalDefensePrefab = prefab.GetComponent<SeaTruckUpgrades>().electricalDefensePrefab;
+        Main.logger.LogDebug("Done !");
     }
     public bool Zap(Vehicle vehicle, int usedSlotID, float charge, float chargeScalar)
     {
@@ -33,7 +40,6 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
         this.Overcharge = charge;
         this.OverchargeScalar = chargeScalar;
         Main.logger.LogInfo("Settings set, it should be zapping.");
-        CoroutineHost.StartCoroutine(UpdateDefensePrefab());
 
         Main.logger.LogInfo("Executing Zap in radius..");
         ZapRadius(vehicle);

@@ -4,12 +4,14 @@
 public class ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch // Thanks to Grimm The Second !
 {
     [HarmonyPrefix]
-    [HarmonyPatch(nameof(ExosuitTorpedoArm.OnOpenTorpedoStorage))]
+    [HarmonyPatch(typeof(ExosuitTorpedoArm), nameof(ExosuitTorpedoArm.OpenTorpedoStorageExternal))]
     public static void OpenTorpedoStorageExternal(ExosuitTorpedoArm __instance)
     {
-        __instance.container.allowedTech.AddRange(new TechType[]
+        Main.logger.LogDebug("Trying to open PRAWN torpedo arm. Adding TechType: " + ExplosiveTorpedo.TechType);
+        __instance.container.allowedTech.AddRange(new[]
         {
             ExplosiveTorpedo.TechType
         });
+        Main.logger.LogDebug("Added torpedo techtypes to PRAWN torpedo arm container filter.");
     }
 }

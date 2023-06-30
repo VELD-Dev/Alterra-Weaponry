@@ -11,9 +11,12 @@ internal class Coal
     public Coal()
     {
         Main.logger.LogDebug("Loading Coal prefab info");
+        if (!Main.resources.TryGetAsset("Coal", out Sprite icon))
+            Main.logger.LogError("Unable to load Coal Sprite from cache.");
+
         this.Info = PrefabInfo
             .WithTechType(classId: ClassID, displayName: null, description: null, unlockAtStart: true, techTypeOwner: Assembly.GetExecutingAssembly())
-            .WithIcon(Main.assets.LoadAsset<Sprite>("Sprite.Coal"))
+            .WithIcon(icon)
             .WithSizeInInventory(new(1, 1));
 
         TechType = this.Info.TechType;
@@ -38,6 +41,7 @@ internal class Coal
         PrefabTemplate clone = new CloneTemplate(this.Info, TechType.Nickel);
 
         customPrefab.SetGameObject(clone);
+        customPrefab.SetUnlock(TechType.CreepvineSeedCluster);
         customPrefab.SetEquipment(EquipmentType.None);
         customPrefab.SetRecipe(recipe)
             .WithCraftingTime(4f)

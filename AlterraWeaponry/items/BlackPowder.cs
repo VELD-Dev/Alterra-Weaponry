@@ -8,15 +8,18 @@ internal class BlackPowder
     public static TechType TechType { get; private set; } = 0;
 
 
-    public static GameObject AssetPrefab = Main.assets.LoadAsset<GameObject>("GameObject.BlackPowder");
+    public static GameObject AssetPrefab = Main.resources.GetAsset<GameObject>("BlackPowder");
     public PrefabInfo Info { get; private set; }
 
     public BlackPowder()
     {
         Main.logger.LogDebug("Loading BlackPowder prefab info");
+        if (!Main.resources.TryGetAsset("BlackPowder", out Sprite icon))
+            Main.logger.LogError("Unable to load BlackPowder sprite from cache.");
+
         this.Info = PrefabInfo
             .WithTechType(classId: ClassID, displayName: null, description: null, unlockAtStart: true, techTypeOwner: Assembly.GetExecutingAssembly())
-            .WithIcon(Main.assets.LoadAsset<Sprite>("Sprite.BlackPowder"))
+            .WithIcon(icon)
             .WithSizeInInventory(new(1, 1));
         TechType = this.Info.TechType;
         Main.logger.LogDebug("Loaded BlackPowder prefab info and assigned TechType");
@@ -41,6 +44,13 @@ internal class BlackPowder
         CustomPrefab customPrefab = new(this.Info);
 
         customPrefab.SetGameObject(SetupGameObject());
+        customPrefab.SetUnlock(TechType.Creepvine)
+            .WithCompoundTechsForUnlock(new()
+            {
+                TechType.Creepvine,
+                Coal.TechType,
+                TechType.Sulphur,
+            });
         customPrefab.SetEquipment(EquipmentType.None);
         customPrefab.SetRecipe(recipe)
             .WithCraftingTime(2.5f)

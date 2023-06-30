@@ -6,8 +6,7 @@ internal class ExplosiveTorpedoInitializer // Thanks to Grimm The Second !
 
     public static void InitPrefab(GameObject prefab)
     {
-        bool flag = torpedoType != null;
-        if(!flag)
+        if(torpedoType == null)
         {
             if(!prefab)
             {
@@ -25,7 +24,7 @@ internal class ExplosiveTorpedoInitializer // Thanks to Grimm The Second !
                 torpedoType = new()
                 {
                     techType = ExplosiveTorpedo.TechType,
-                    prefab = prefab
+                    prefab = go
                 };
             }
         }

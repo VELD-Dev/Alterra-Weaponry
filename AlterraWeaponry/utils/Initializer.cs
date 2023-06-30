@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nautilus.Handlers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,30 +10,37 @@ namespace VELD.AlterraWeaponry.Utils;
 
 internal class Initializer
 {
+    internal static string AudiosPath = Path.Combine(Assembly.GetExecutingAssembly().Location, "Sounds");
     internal static void PatchGoals()
     {
-        Main.AWPresentationGoal = new("AWPresentation", Story.GoalType.PDA, 8f)
+
+        Main.AWPresentationGoal = new("PWAPresentation", Story.GoalType.PDA, 8f)
         { 
             playInCreative = true,
             playInCinematics = false,
             delay = 8f
         };
 
-        Main.AWFirstLethal = null;
+        Main.AWFirstLethal = Nautilus.Handlers.StoryGoalHandler.RegisterItemGoal("AWFirstLethal", Story.GoalType.PDA, ExplosiveTorpedo.TechType, 3f);
     }
 
     internal static void PatchPDALogs()
     {
         // Load audio clips
         Main.logger.LogInfo($"{Main.modName} {Main.modVers} Loading audio clips...");
-        AudioClip AWPresentationAudioClip = Main.assets.LoadAsset<AudioClip>("AudioClip.PWAPresentation");
-        AudioClip AWFirstLethalAudioClip = Main.assets.LoadAsset<AudioClip>("AudioClip.FirstLethalMessage");
+        /*
+        if (!Main.resources.TryGetAsset("PWAPresentation", out AudioClip AWPresentationAudioClip))
+            Main.logger.LogError("PWAPresentation audio was not loaded.");
+
+        if (!Main.resources.TryGetAsset("FirstLethalMessage", out AudioClip AWFirstLethalAudioClip))
+            Main.logger.LogError("FirstLethalMessage audio was not loaded.");
+        */
         Main.logger.LogInfo($"{Main.modName} {Main.modVers} Audio clips loaded!");
 
         Main.logger.LogInfo($"{Main.modName} {Main.modVers} Registering PDA Logs...");
 
         // Presentation PDA log "Hello xenoworker 91802..."
-        CustomSoundHandler.RegisterCustomSound(Main.AWPresentationGoal.key, AWPresentationAudioClip, AudioUtils.BusPaths.PDAVoice);
+        CustomSoundHandler.RegisterCustomSound(Main.AWPresentationGoal.key, Path.Combine(AudiosPath, "AudioClip.PWAPresentation.ogg"), AudioUtils.BusPaths.PDAVoice);
         FMODAsset presentation = AudioUtils.GetFmodAsset(Main.AWPresentationGoal.key);
         PDAHandler.AddLogEntry(
             Main.AWPresentationGoal.key,
@@ -41,7 +49,7 @@ internal class Initializer
         );
 
         // First lethal weapon PDA log "A lethal weapon have been detected into your inventory..."
-        CustomSoundHandler.RegisterCustomSound("AWFirstLethal", AWFirstLethalAudioClip, AudioUtils.BusPaths.PDAVoice);
+        CustomSoundHandler.RegisterCustomSound("AWFirstLethal", Path.Combine(AudiosPath, "AudioClip.FirstLethalMessage.ogg"), AudioUtils.BusPaths.PDAVoice);
         FMODAsset firstLethal = AudioUtils.GetFmodAsset("AWFirstLethal");
         PDAHandler.AddLogEntry(
             "AWFirstLethal",
@@ -62,16 +70,6 @@ internal class Initializer
             unlocked = true,
         });
 
-        // Explosive torpedoes entry
-        PDAHandler.AddEncyclopediaEntry(new()
-        {
-            key = "ExplosiveTorpedo",
-            kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
-            nodes = new[] { "Tech", "Weaponry" },
-            path = "Tech/Weaponry",
-            unlocked = false,
-        });
-
         // Prawn laser arm entry
         PDAHandler.AddEncyclopediaEntry(new()
         {
@@ -79,16 +77,6 @@ internal class Initializer
             kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
             nodes = new[] { "Tech", "Weaponry" },
             path = "Tech/Weaponry",
-            unlocked = false,
-        });
-
-        // Prawn Self Defense Module
-        PDAHandler.AddEncyclopediaEntry(new()
-        {
-            key = "PrawnDefensePerimeter",
-            kind = PDAEncyclopedia.EntryData.Kind.Encyclopedia,
-            nodes = new[] { "Tech", "Weaponry", "Modules" },
-            path = "Tech/Weaponry/Modules",
             unlocked = false,
         });
     }

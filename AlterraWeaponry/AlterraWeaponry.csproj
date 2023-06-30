@@ -65,6 +65,8 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -125,16 +127,16 @@
     <Compile Include="utils\Initializer.cs" />
     <Compile Include="utils\LanguagesHandler.cs" />
     <Compile Include="utils\Options.cs" />
+    <Compile Include="utils\ResourcesManager.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="assets\Coal.png" />
-    <Content Include="assets\ExplosiveTorpedo.png" />
-    <Content Include="assets\first_lethal_weapon_message.mp3" />
-    <Content Include="assets\first_lethal_weapon_message.ogg" />
-    <Content Include="assets\PrawnPerimeterDefense.png" />
-    <Content Include="assets\prawn_shield.png" />
-    <Content Include="assets\xenoworx_pda_presentation.mp3" />
+    <AdditionalFiles Include="Sounds\AudioClip.FirstLethalMessage.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
+    <AdditionalFiles Include="Sounds\AudioClip.PWAPresentation.ogg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
     <Content Include="Localizations.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -143,7 +145,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry"
+mkdir "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\Sounds"
 copy /Y "$(TargetPath)" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"
+copy /Y "$(ProjectDir)\Sounds" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\Sounds"
 copy /Y "$(ProjectDir)\alterraweaponry.assets" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"
 copy /Y "$(ProjectDir)\Localizations.xml" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"</PostBuildEvent>
   </PropertyGroup>
