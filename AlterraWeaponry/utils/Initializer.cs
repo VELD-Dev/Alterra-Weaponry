@@ -10,7 +10,7 @@ namespace VELD.AlterraWeaponry.Utils;
 
 internal class Initializer
 {
-    internal static string AudiosPath = Path.Combine(Assembly.GetExecutingAssembly().Location, "Sounds");
+    internal static string AudiosPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sounds");
     internal static void PatchGoals()
     {
 
@@ -20,6 +20,11 @@ internal class Initializer
             playInCinematics = false,
             delay = 8f
         };
+
+        Nautilus.Handlers.StoryGoalHandler.RegisterCustomEvent(Main.AWPresentationGoal.key, () =>
+        {
+            Main.logger.LogInfo("Played PWAPresentation goal.");
+        });
 
         Main.AWFirstLethal = Nautilus.Handlers.StoryGoalHandler.RegisterItemGoal("AWFirstLethal", Story.GoalType.PDA, ExplosiveTorpedo.TechType, 3f);
     }
@@ -41,7 +46,9 @@ internal class Initializer
 
         // Presentation PDA log "Hello xenoworker 91802..."
         CustomSoundHandler.RegisterCustomSound(Main.AWPresentationGoal.key, Path.Combine(AudiosPath, "AudioClip.PWAPresentation.ogg"), AudioUtils.BusPaths.PDAVoice);
-        FMODAsset presentation = AudioUtils.GetFmodAsset(Main.AWPresentationGoal.key);
+        FMODAsset presentation = ScriptableObject.CreateInstance<FMODAsset>();
+        presentation.path = Main.AWPresentationGoal.key;
+        //FMODAsset presentation = AudioUtils.GetFmodAsset(Main.AWPresentationGoal.key);
         PDAHandler.AddLogEntry(
             Main.AWPresentationGoal.key,
             "Subtitles_AWPresentation",
@@ -56,6 +63,8 @@ internal class Initializer
             "Subtitles_AWFirstLethal",
             sound: firstLethal
         );
+
+        Main.logger.LogInfo($"{Main.modName} {Main.modVers} Registered PDA logs!");
     }
 
     internal static void PatchPDAEncyEntries()

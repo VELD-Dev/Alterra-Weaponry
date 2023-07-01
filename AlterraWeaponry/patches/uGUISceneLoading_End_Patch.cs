@@ -8,7 +8,7 @@ public class uGUISceneLoading_End_Patch
     public static void End(uGUI_SceneLoading __instance, bool fade)
     {
         Main.logger.LogInfo("Triggered LoadingScene end.");
-        if(StoryGoalManager.main.OnGoalComplete(Main.AWPresentationGoal.key))
+        //if(StoryGoalManager.main.OnGoalComplete(Main.AWPresentationGoal.key))
             Main.AWPresentationGoal.Trigger();
         Main.logger.LogInfo("Should play or have played AWPresentationGoal.");
     }
