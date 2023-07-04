@@ -1,4 +1,5 @@
-﻿using Nautilus.Handlers;
+﻿using FMOD;
+using Nautilus.Handlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using UnityEngine.Assertions;
 
 namespace VELD.AlterraWeaponry.Utils;
 
-internal class Initializer
+internal class GlobalInitializer
 {
     internal static string AudiosPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sounds");
     internal static void PatchGoals()
@@ -34,10 +35,10 @@ internal class Initializer
         // Load audio clips
         Main.logger.LogInfo($"{Main.modName} {Main.modVers} Loading audio clips...");
         /*
-        if (!Main.resources.TryGetAsset("PWAPresentation", out AudioClip AWPresentationAudioClip))
+        if (!Main.AssetsCache.TryGetAsset("PWAPresentation", out AudioClip AWPresentationAudioClip))
             Main.logger.LogError("PWAPresentation audio was not loaded.");
 
-        if (!Main.resources.TryGetAsset("FirstLethalMessage", out AudioClip AWFirstLethalAudioClip))
+        if (!Main.AssetsCache.TryGetAsset("FirstLethalMessage", out AudioClip AWFirstLethalAudioClip))
             Main.logger.LogError("FirstLethalMessage audio was not loaded.");
         */
         Main.logger.LogInfo($"{Main.modName} {Main.modVers} Audio clips loaded!");
@@ -45,24 +46,38 @@ internal class Initializer
         Main.logger.LogInfo($"{Main.modName} {Main.modVers} Registering PDA Logs...");
 
         // Presentation PDA log "Hello xenoworker 91802..."
-        CustomSoundHandler.RegisterCustomSound(Main.AWPresentationGoal.key, Path.Combine(AudiosPath, "AudioClip.PWAPresentation.ogg"), AudioUtils.BusPaths.PDAVoice);
-        FMODAsset presentation = ScriptableObject.CreateInstance<FMODAsset>();
-        presentation.path = Main.AWPresentationGoal.key;
-        //FMODAsset presentation = AudioUtils.GetFmodAsset(Main.AWPresentationGoal.key);
-        PDAHandler.AddLogEntry(
-            Main.AWPresentationGoal.key,
-            "Subtitles_AWPresentation",
-            sound: presentation
-        );
+        if(Main.AssetsCache.TryGetAsset("PWAPresentation", out AudioClip PWAPresentation))
+        {
+            Main.logger.LogInfo("PWAPresentation audio message is being registered.");
+            Sound sound = AudioUtils.CreateSound(PWAPresentation, MODE._2D);
+            CustomSoundHandler.RegisterCustomSound(Main.AWPresentationGoal.key, sound, AudioUtils.BusPaths.PDAVoice);
+            //FMODAsset fmodAsset = ScriptableObject.CreateInstance<FMODAsset>();
+            //fmodAsset.path = Main.AWPresentationGoal.key;
+            FMODAsset fmodAsset = AudioUtils.GetFmodAsset(Main.AWPresentationGoal.key);
+            PDAHandler.AddLogEntry(
+                Main.AWPresentationGoal.key,
+                "Subtitles_AWPresentation",
+                sound: fmodAsset,
+                SpriteManager.Get(SpriteManager.Group.Log, "Pda")
+            );
+        }
 
         // First lethal weapon PDA log "A lethal weapon have been detected into your inventory..."
-        CustomSoundHandler.RegisterCustomSound("AWFirstLethal", Path.Combine(AudiosPath, "AudioClip.FirstLethalMessage.ogg"), AudioUtils.BusPaths.PDAVoice);
-        FMODAsset firstLethal = AudioUtils.GetFmodAsset("AWFirstLethal");
-        PDAHandler.AddLogEntry(
-            "AWFirstLethal",
-            "Subtitles_AWFirstLethal",
-            sound: firstLethal
-        );
+        if(Main.AssetsCache.TryGetAsset("FirstLethalMessage", out AudioClip AWFirstLethal))
+        {
+            Main.logger.LogInfo("AWFirstLethal audio message is being registered.");
+            Sound sound = AudioUtils.CreateSound(AWFirstLethal, MODE.DEFAULT | MODE._2D | MODE.ACCURATETIME | MODE.CREATESTREAM);
+            CustomSoundHandler.RegisterCustomSound("AWFirstLethal", sound, AudioUtils.BusPaths.PDAVoice);
+            FMODAsset fmodAsset = AudioUtils.GetFmodAsset("AWFirstLethal");
+            PDAHandler.AddLogEntry(
+                key: "AWFirstLethal",
+                languageKey: "Subtitles_AWFirstLethal",
+                sound: fmodAsset,
+                SpriteManager.Get(SpriteManager.Group.Log, "Pda")
+            );
+            Main.logger.LogInfo("AWFirstLethal registered successfully.");
+
+        }
 
         Main.logger.LogInfo($"{Main.modName} {Main.modVers} Registered PDA logs!");
     }

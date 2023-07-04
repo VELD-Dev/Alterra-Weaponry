@@ -14,18 +14,27 @@ internal class ExplosiveTorpedoInitializer // Thanks to Grimm The Second !
             }
             else
             {
-                GameObject go = new GameObject("TorpedoExplosion", new Type[]
+                try
                 {
-                    typeof(TorpedoExplosionBehaviour)
-                });
-                ModPrefabCache.AddPrefab(go);
-                prefab.GetComponent<SeamothTorpedo>().explosionPrefab = go;
-                prefab.GetComponent<SeamothTorpedo>().homingTorpedo = true;
-                torpedoType = new()
+                    CoroutineHost.StartCoroutine(TorpedoExplosionBehaviour.SetupDetonationPrefabAsync());
+                    Main.logger.LogInfo("Initializing TorpedoExplosionBehaviour TorpedoExplosion prefab...");
+                    GameObject go = new("TorpedoExplosion", new Type[]
+                    {
+                        typeof(TorpedoExplosionBehaviour)
+                    });
+                    ModPrefabCache.AddPrefab(go);
+                    prefab.GetComponent<SeamothTorpedo>().explosionPrefab = go;
+                    prefab.GetComponent<SeamothTorpedo>().homingTorpedo = true;
+                    torpedoType = new()
+                    {
+                        techType = ExplosiveTorpedo.TechType,
+                        prefab = prefab
+                    };
+                }
+                catch(Exception ex)
                 {
-                    techType = ExplosiveTorpedo.TechType,
-                    prefab = go
-                };
+                    Main.logger.LogError($"An error has occured while initializing torpedo prefab.\n{ex}");
+                }
             }
         }
     }

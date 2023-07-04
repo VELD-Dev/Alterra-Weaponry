@@ -8,13 +8,13 @@ internal class BlackPowder
     public static TechType TechType { get; private set; } = 0;
 
 
-    public static GameObject AssetPrefab = Main.resources.GetAsset<GameObject>("BlackPowder");
+    public static GameObject AssetPrefab = Main.AssetsCache.GetAsset<GameObject>("BlackPowder");
     public PrefabInfo Info { get; private set; }
 
     public BlackPowder()
     {
         Main.logger.LogDebug("Loading BlackPowder prefab info");
-        if (!Main.resources.TryGetAsset("BlackPowder", out Sprite icon))
+        if (!Main.AssetsCache.TryGetAsset("BlackPowder", out Sprite icon))
             Main.logger.LogError("Unable to load BlackPowder sprite from cache.");
 
         this.Info = PrefabInfo

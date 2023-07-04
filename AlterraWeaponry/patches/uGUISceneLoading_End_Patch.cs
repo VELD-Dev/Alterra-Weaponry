@@ -1,4 +1,6 @@
-﻿namespace VELD.AlterraWeaponry.Patches;
+﻿using FMOD;
+
+namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(uGUI_SceneLoading))]
 public class uGUISceneLoading_End_Patch
@@ -9,7 +11,7 @@ public class uGUISceneLoading_End_Patch
     {
         Main.logger.LogInfo("Triggered LoadingScene end.");
         //if(StoryGoalManager.main.OnGoalComplete(Main.AWPresentationGoal.key))
-            Main.AWPresentationGoal.Trigger();
+        Main.AWPresentationGoal.Trigger();
         Main.logger.LogInfo("Should play or have played AWPresentationGoal.");
     }
 }

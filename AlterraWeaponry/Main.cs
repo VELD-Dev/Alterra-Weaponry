@@ -1,4 +1,5 @@
-﻿using VELD.AlterraWeaponry.utils;
+﻿using System.Linq;
+using VELD.AlterraWeaponry.utils;
 
 namespace VELD.AlterraWeaponry;
 
@@ -18,7 +19,7 @@ public class Main : BaseUnityPlugin
     internal static StoryGoal AWPresentationGoal;
     internal static ItemGoal AWFirstLethal;
 
-    public static ResourcesManager resources { get; private set; }
+    public static ResourcesManager AssetsCache { get; private set; }
 
     internal static Options Options { get; } = OptionsPanelHandler.RegisterModOptions<Options>();
 
@@ -27,7 +28,7 @@ public class Main : BaseUnityPlugin
         logger = Logger;
         try
         {
-            resources = ResourcesManager.LoadResources(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "alterraweaponry.assets"));
+            AssetsCache = ResourcesManager.LoadResources(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "alterraweaponry.assets"));
         }
         catch (Exception ex)
         {
@@ -38,18 +39,18 @@ public class Main : BaseUnityPlugin
         logger.LogInfo($"{modName} {modVers} harmony patched.");
         LanguagesHandler.LanguagePatch();
         logger.LogInfo($"{modName} {modVers} languages lines patched.");
-        Initializer.PatchPDAEncyEntries();
+        GlobalInitializer.PatchPDAEncyEntries();
         logger.LogInfo($"{modName} {modVers} PDA encyclopedia entries registered.");
-        Initializer.PatchGoals();
+        GlobalInitializer.PatchGoals();
         logger.LogInfo($"{modName} {modVers} PDA goals initialized.");
-        Initializer.PatchPDALogs();
+        GlobalInitializer.PatchPDALogs();
         logger.LogInfo($"{modName} {modVers} PDA logs registered.");
 
         ModDatabankHandler.RegisterMod(new ModDatabankHandler.ModData()
         {
             guid = modGUID,
             version = modVers,
-            image = resources.GetAsset<Texture2D>("ModLogo"),
+            image = AssetsCache.GetAsset<Texture2D>("ModLogo"),
             name = "Alterra Weaponry",
             desc = "Since the return of the Aurora survivor, Alterra secretely added a few weapons blueprints.\nThis information is kept confidential, by using the PWA (Personal Weaponry Assistance) you agree the Alterra's NDA (Non-Divulgation Accord)."
         });
@@ -74,16 +75,21 @@ public class Main : BaseUnityPlugin
         if(UnityInput.Current.GetKeyDown(KeyCode.P))
         {
             logger.LogInfo("Should play audio.");
-            GameObject cameraObject = Camera.main.gameObject;
             logger.LogInfo("CameraObject defined.");
-            AudioSource audioSource = cameraObject.GetComponent<AudioSource>();
+            AudioSource audioSource = Instantiate(new GameObject("AudioTest", new[] {
+                typeof(AudioSource)
+            })).GetComponent<AudioSource>();
+
             logger.LogInfo("audioSource defined.");
-            if (!resources.TryGetAsset("PWAPresentation", out AudioClip clip))
+            if(!AssetsCache.TryGetAsset<AudioClip>("PWAPresentation", out var audioAsset))
                 logger.LogError("Audio was not able to load from cache.");
-            audioSource.clip = clip;
-            logger.LogInfo("AudioClip defined.");
             try
             {
+                if (audioSource == null)
+                    logger.LogError("AudioSource is null ??");
+                audioSource.clip = Instantiate((AudioClip)audioAsset);
+                logger.LogInfo("AudioClip defined.");
+                global::Utils.SpawnZeroedAt(audioSource.gameObject, Player.main.transform);
                 audioSource.Play();
                 logger.LogInfo("Should have played an audio.");
             }

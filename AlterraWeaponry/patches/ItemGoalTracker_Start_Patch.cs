@@ -34,7 +34,7 @@ internal class ItemGoalTracker_Start_Patch
             {
                 techType = techType,
                 goalType = Story.GoalType.Encyclopedia,
-                key = $"Ency_PDA_Goal_{nameof(techType)}",
+                key = $"Ency_{nameof(techType)}",
                 playInCreative = true,
                 playInCinematics = false,
             };

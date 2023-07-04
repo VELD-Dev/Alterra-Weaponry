@@ -13,7 +13,7 @@ internal class ExplosiveTorpedo
 
     public ExplosiveTorpedo()
     {
-        if (!Main.resources.TryGetAsset("ExplosiveTorpedo", out Sprite icon))
+        if (!Main.AssetsCache.TryGetAsset("ExplosiveTorpedo", out Sprite icon))
             Main.logger.LogError("Unable to load ExplosiveTorpedo Sprite from cache.");
 
         Info = PrefabInfo
@@ -40,7 +40,7 @@ internal class ExplosiveTorpedo
         CloneTemplate clone = new(Info, TechType.GasTorpedo);
 
         customPrefab.SetGameObject(clone);
-        if (!Main.resources.TryGetAsset("UpgradePopup", out Sprite popupSprite))
+        if (!Main.AssetsCache.TryGetAsset("UpgradePopup", out Sprite popupSprite))
             Main.logger.LogError("Unable to load UpgradePopup sprite from cache.");
         customPrefab.SetUnlock(Coal.TechType)
             .WithEncyclopediaEntry("Tech/Weaponry", popupSprite);

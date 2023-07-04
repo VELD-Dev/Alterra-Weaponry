@@ -5,30 +5,59 @@ public class TorpedoExplosionBehaviour : MonoBehaviour
 {
     public void Awake()
     {
-        UWE.CoroutineHost.StartCoroutine(SetupDetonationPrefabAsync());
     }
 
     public void Start()
     {
-        DamageSystem.RadiusDamage((250f * Main.Options.dmgMultiplier), base.gameObject.transform.position, 10f, DamageType.Explosive, base.gameObject);
+        Main.logger.LogInfo("Releasing explosion !");
+        DamageSystem.RadiusDamage((250f * Main.Options.dmgMultiplier), gameObject.transform.position, 10f, DamageType.Explosive, gameObject);
 #if BELOWZERO
-        global::Utils.PlayOneShotPS(detonationEffectPrefab, base.gameObject.transform.position, base.gameObject.transform.rotation, null);
+        try
+        {
+            var vfxMeteor = detonationPrefab.GetComponent<VFXMeteor>();
+            if (vfxMeteor.impactPrefab == null)
+                throw new Exception("vfxMeteor.impactPerfab is null.");
+            global::Utils.PlayOneShotPS(vfxMeteor.impactPrefab, gameObject.transform.position, gameObject.transform.rotation);
+            if (vfxMeteor.meteorCrashOSSound == null)
+                throw new Exception("vfxMeteor.meteorCrashOSSound is null.");
+            VFXWeatherManager.PlayOneShotSound(vfxMeteor.meteorCrashOSSound, gameObject.transform.position, 8f, Array.Empty<VFXWeatherManager.FmodParameter>());
+        }
+        catch(Exception e)
+        {
+            Main.logger.LogError($"An error has occured while exploding the torpedo.\n{e}");
+        }
 #elif SUBNAUTICA
-        //global::Utils.PlayOneShotPS(GameObject.Instantiate<LavaLizard>(new LavaLizard()).GetComponent<LavaLiazardRangedAttack>().attackStartFXcontrol.emitters[0].fx, base.gameObject.transform.position, base.gameObject.transform.rotation, null);
+        global::Utils.PlayOneShotPS(GameObject.Instantiate<LavaLizard>(new LavaLizard()).GetComponent<LavaLiazardRangedAttack>().attackStartFXcontrol.emitters[0].fx, base.gameObject.transform.position, base.gameObject.transform.rotation, null);
 #endif
-        Destroy(base.gameObject);
+        Destroy(gameObject);
+        Main.logger.LogInfo("Exploded !!!");
     }
 
-    public static GameObject detonationEffectPrefab;
+    public static GameObject detonationPrefab;
 
     public static IEnumerator SetupDetonationPrefabAsync()
     {
-        var vfxMeteor = new VFXMeteor();
-        var task = GameObject.Instantiate<VFXMeteor>(vfxMeteor);
-        yield return task;
-        var taskGo = GameObject.Instantiate(task.impactPrefab);
-        yield return taskGo;
-        detonationEffectPrefab = taskGo;
+        Main.logger.LogInfo($"{typeof(TorpedoExplosionBehaviour).FullName}: Setting up detonation prefab for explosive torpedo...");
+        if (detonationPrefab != null)
+        {
+            Main.logger.LogInfo($"{typeof(TorpedoExplosionBehaviour).FullName}: vfxMeteor is already defined.");
+            yield break;
+        }
 
+        GameObject prefab;
+
+#if BELOWZERO
+        prefab = VFXWeatherManager.main.meteorController.closeUpPrefab;
+
+        if(prefab.GetComponent<VFXMeteor>() == null)
+        {
+            Main.logger.LogError($"{typeof(TorpedoExplosionBehaviour).FullName}: No VFXMeteor found in the closeupPrefab.");
+            yield break;
+        }
+#endif
+
+        yield return prefab;
+        detonationPrefab = prefab;
+        Main.logger.LogInfo($"{typeof(TorpedoExplosionBehaviour).FullName}: Detonation prefab set up.");
     }
 }

@@ -11,7 +11,7 @@ internal class Coal
     public Coal()
     {
         Main.logger.LogDebug("Loading Coal prefab info");
-        if (!Main.resources.TryGetAsset("Coal", out Sprite icon))
+        if (!Main.AssetsCache.TryGetAsset("Coal", out Sprite icon))
             Main.logger.LogError("Unable to load Coal Sprite from cache.");
 
         this.Info = PrefabInfo

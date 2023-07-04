@@ -36,6 +36,7 @@
     <OutputPath>bin\BZ\</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DefineConstants>BZ; BELOWZERO; BELOW_ZERO;</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN1|AnyCPU' ">
     <OutputPath>bin\SN1\</OutputPath>
@@ -44,9 +45,6 @@
   <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\core\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
@@ -124,20 +122,20 @@
     <Compile Include="patches\uGUISceneLoading_End_Patch.cs" />
     <Compile Include="patches\Vehicle_Awake_Patch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="utils\Initializer.cs" />
+    <Compile Include="utils\GlobalInitializer.cs" />
     <Compile Include="utils\LanguagesHandler.cs" />
     <Compile Include="utils\Options.cs" />
     <Compile Include="utils\ResourcesManager.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <AdditionalFiles Include="Sounds\AudioClip.FirstLethalMessage.ogg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </AdditionalFiles>
-    <AdditionalFiles Include="Sounds\AudioClip.PWAPresentation.ogg">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </AdditionalFiles>
     <Content Include="Localizations.xml" />
+    <AdditionalFiles Include="Sounds\AudioClip.FirstLethalMessage.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
+    <AdditionalFiles Include="Sounds\AudioClip.PWAPresentation.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </AdditionalFiles>
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />

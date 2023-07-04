@@ -42,6 +42,8 @@ public class ResourcesManager
         { "Texture2D", new[] { "Textures2D" } }
     };
 
+    public static UnityEngine.Object[] RawResources;
+
     public Dictionary<string, AudioClip> CachedAudioClips { get; private set; } = new();
     public Dictionary<string, GameObject> CachedPrefabs { get; private set; } = new();
     public Dictionary<string, Material> CachedMaterials { get; private set; } = new();
@@ -54,6 +56,7 @@ public class ResourcesManager
     {
         Main.logger.LogInfo("Loading assetbundle...");
         var bundle = AssetBundle.LoadFromFile(path) ?? throw new IOException($"Provided path '{path}' does not contain any assetbundle.");
+        RawResources = bundle.LoadAllAssets();
         var rm = new ResourcesManager();
 
         Main.logger.LogInfo("Loaded bundle, encaching...");
@@ -144,7 +147,7 @@ public class ResourcesManager
     }
 
     /// <summary>
-    /// Gets a resource in the resources cache.
+    /// Gets a resource in the AssetsCache cache.
     /// <para>You better use <see cref="TryGetAsset{T}(string, out T)"/>.</para>
     /// </summary>
     /// <typeparam name="T">Type of the item to find.</typeparam>

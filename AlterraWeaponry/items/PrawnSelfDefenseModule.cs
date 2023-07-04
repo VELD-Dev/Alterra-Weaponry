@@ -18,7 +18,7 @@ public class PrawnSelfDefenseModule
 
     public PrawnSelfDefenseModule()
     {
-        if (!Main.resources.TryGetAsset("PrawnSelfDefenseModule", out Sprite icon))
+        if (!Main.AssetsCache.TryGetAsset("PrawnSelfDefenseModule", out Sprite icon))
             Main.logger.LogError("Unable to load PrawnSelfDefenseModule sprite from cache.");
 
         Info = PrefabInfo
@@ -49,7 +49,7 @@ public class PrawnSelfDefenseModule
 
         customPrefab.SetGameObject(clone);
 
-        if (!Main.resources.TryGetAsset("UpgradePopup", out Sprite popupSprite))
+        if (!Main.AssetsCache.TryGetAsset("UpgradePopup", out Sprite popupSprite))
             Main.logger.LogError("Unable to load UpgradePopup sprite from cache.");
 
         customPrefab.SetUnlock(TechType.Polyaniline)
