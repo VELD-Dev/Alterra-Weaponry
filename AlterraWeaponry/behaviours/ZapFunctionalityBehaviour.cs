@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.behaviours;
+﻿namespace VELD.AlterraWeaponry.Behaviours;
 
 internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and PrimeSonic 👌
 {
@@ -9,10 +9,16 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
     public float Overcharge { get; private set; }
     public float OverchargeScalar { get; private set; } 
 
+    private void Awake()
+    {
+        if(seamothElectricalDefensePrefab == null)
+            CoroutineHost.StartCoroutine(UpdateDefensePrefab());
+    }
+
     public static IEnumerator UpdateDefensePrefab()
     {
-        if (seamothElectricalDefensePrefab) yield break;
-
+        if (seamothElectricalDefensePrefab is not null) yield break;
+        Main.logger.LogDebug("Updating defense prefab for ZapFunctionalityBehaviour.ElectricalDefensePrefab.");
         var task = CraftData.GetPrefabForTechTypeAsync(TechType.SeaTruck);
         yield return task;
         var prefab = task.GetResult();
@@ -20,18 +26,20 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
         if (prefab == null) yield break;
 
         seamothElectricalDefensePrefab = prefab.GetComponent<SeaTruckUpgrades>().electricalDefensePrefab;
+        Main.logger.LogDebug("Done !");
     }
-    public bool Zap(Vehicle vehicle, int usedSlotID)
+    public bool Zap(Vehicle vehicle, int usedSlotID, float charge, float chargeScalar)
     {
+        Main.logger.LogInfo("Preparing the zap...");
         if (vehicle == null)
             return false;
 
-        float charge = vehicle.quickSlotCharge[usedSlotID];
-        float slotCharge = vehicle.GetSlotCharge(usedSlotID);
+        Main.logger.LogInfo("Should zap.");
         this.Overcharge = charge;
-        this.OverchargeScalar = slotCharge;
-        CoroutineHost.StartCoroutine(UpdateDefensePrefab());
+        this.OverchargeScalar = chargeScalar;
+        Main.logger.LogInfo("Settings set, it should be zapping.");
 
+        Main.logger.LogInfo("Executing Zap in radius..");
         ZapRadius(vehicle);
         return true;
     }
@@ -39,9 +47,11 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
     private void ZapRadius(Vehicle vehicle)
     {
 
-        GameObject gameObject = Utils.SpawnZeroedAt(ElectricalDefensePrefab, vehicle.transform, false);
+        GameObject gameObject = global::Utils.SpawnZeroedAt(ElectricalDefensePrefab, vehicle.transform, false);
         ElectricalDefense defenseComponent = gameObject.GetComponent<ElectricalDefense>();
         defenseComponent.charge = this.Overcharge;
         defenseComponent.chargeScalar = this.OverchargeScalar;
+        defenseComponent.damage *= Main.Options.dmgMultiplier;
+        Main.logger.LogInfo("Should have zapped !");
     }
 }

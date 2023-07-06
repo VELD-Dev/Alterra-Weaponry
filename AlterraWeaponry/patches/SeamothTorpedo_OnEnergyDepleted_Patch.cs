@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.patches;
+﻿namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(SeamothTorpedo))]
 public class SeamothTorpedo_OnEnergyDepleted_Patch // Thanks to Grimm The Second !
@@ -7,6 +7,6 @@ public class SeamothTorpedo_OnEnergyDepleted_Patch // Thanks to Grimm The Second
     [HarmonyPatch(nameof(SeamothTorpedo.OnEnergyDepleted))]
     public static bool OnEnergyDepleted(SeamothTorpedo __instance)
     {
-        return __instance.enabled;
+        return __instance._active;
     }
 }

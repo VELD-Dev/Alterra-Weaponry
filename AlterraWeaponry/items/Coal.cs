@@ -1,28 +1,32 @@
-﻿namespace VELD.AlterraWeaponry.items;
+﻿namespace VELD.AlterraWeaponry.Items;
 
-internal class Coal : Craftable
+internal class Coal
 {
-    public static GameObject prefab;
-    public static TechType techType { get; private set; } = 0;
+    public static string ClassID = "Coal";
+    public static TechType TechType { get; private set; } = 0;
 
-    public Coal() : base ("Coal", "Coal", "Tooltip_Coal")
+
+    public PrefabInfo Info { get; private set; }
+
+    public Coal()
     {
-        OnFinishedPatching += () =>
-        {
-            techType = TechType;
-        };
+        Main.logger.LogDebug("Loading Coal go info");
+        if (!Main.AssetsCache.TryGetAsset("Coal", out Sprite icon))
+            Main.logger.LogError("Unable to load Coal Sprite from cache.");
+
+        this.Info = PrefabInfo
+            .WithTechType(classId: ClassID, displayName: null, description: null, unlockAtStart: true, techTypeOwner: Assembly.GetExecutingAssembly())
+            .WithIcon(icon)
+            .WithSizeInInventory(new(1, 1));
+
+        TechType = this.Info.TechType;
+        Main.logger.LogDebug("Loaded Coal go and assigned techType");
     }
 
-    public override CraftTree.Type FabricatorType => CraftTree.Type.Fabricator;
-    public override TechCategory CategoryForPDA => TechCategory.BasicMaterials;
-    public override TechGroup GroupForPDA => TechGroup.Resources;
-    public override Vector2int SizeInInventory => new(1, 1);
-    public override float CraftingTime => 3f;
-    public override bool UnlockedAtStart => true;
-    public override string[] StepsToFabricatorTab => new string[] { "Resources", "BasicMaterials" };
-    protected override RecipeData GetBlueprintRecipe()
+    public void Patch()
     {
-        return new()
+        Main.logger.LogDebug("Setting Coal recipe");
+        RecipeData recipe = new()
         {
             craftAmount = 4,
             Ingredients = new()
@@ -30,24 +34,51 @@ internal class Coal : Craftable
                 new(TechType.CreepvinePiece, 1)
             }
         };
-    }
-    protected override Sprite GetItemSprite()
-    {
-        return Main.assets.LoadAsset<Sprite>("Sprite.Coal");
-    }
-    public override IEnumerator GetGameObjectAsync(IOut<GameObject> gameObject)
-    {
-        if (prefab == null)
+
+        Main.logger.LogDebug("Recipe set, now patching go.");
+
+        CustomPrefab customPrefab = new(this.Info);
+        PrefabTemplate clone = new CloneTemplate(this.Info, TechType.Sulphur)
         {
-            CoroutineTask<GameObject> task = CraftData.GetPrefabForTechTypeAsync(TechType.Titanium);
-            yield return task;
+            ModifyPrefab = (go) =>
+            {
+                var renderer = go.GetComponentInChildren<MeshRenderer>();
+                foreach(var mat in renderer.materials)
+                {
+                    if (Main.AssetsCache.TryGetAsset("Coal", out Texture2D albedo))
+                        mat.SetTexture(ShaderPropertyID._MainTex, albedo);
 
-            prefab = GameObject.Instantiate(task.GetResult());
-        }
+                    if (Main.AssetsCache.TryGetAsset("Coal_spec", out Texture2D specular))
+                        mat.SetTexture(ShaderPropertyID._SpecTex, specular);
 
-        GameObject go = GameObject.Instantiate(prefab);
-        gameObject.Set(go);
+                    if (Main.AssetsCache.TryGetAsset("Coal_illum", out Texture2D illumination))
+                        mat.SetTexture(ShaderPropertyID._Illum, illumination);
+                }
+
+                var vfxFabricating = go.EnsureComponent<VFXFabricating>();
+                MaterialUtils.ApplySNShaders(go);
+            } 
+        };
+
+        customPrefab.SetGameObject(clone);
+        customPrefab.SetUnlock(TechType.CreepvinePiece)
+            .WithPdaGroupCategoryBefore(TechGroup.Resources, TechCategory.BasicMaterials);
+        customPrefab.SetEquipment(EquipmentType.None);
+        customPrefab.SetRecipe(recipe)
+            .WithCraftingTime(4f)
+            .WithFabricatorType(CraftTree.Type.Fabricator)
+            .WithStepsToFabricatorTab("Resources", "BasicMaterials");
+        
+        customPrefab.SetOutcropDrop(
+                new(TechType.LimestoneChunk, 0.408f),
+                new(TechType.BreakableGold, 0.159f),
+                new(TechType.BreakableSilver, 0.118f)
+            );
+
+        customPrefab.Register();
+
+        BaseBioReactor.charge.Add(TechType, 560f);
+
+        Main.logger.LogDebug("Prefab loaded and registered for Coal.");
     }
-
-
 }

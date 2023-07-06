@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.behaviours;
+﻿namespace VELD.AlterraWeaponry.Utils;
 
 internal class ExplosiveTorpedoInitializer // Thanks to Grimm The Second !
 {
@@ -6,29 +6,35 @@ internal class ExplosiveTorpedoInitializer // Thanks to Grimm The Second !
 
     public static void InitPrefab(GameObject prefab)
     {
-        bool flag = torpedoType != null;
-        if(!flag)
+        if(torpedoType == null)
         {
-            bool flag2 = !prefab;
-            if(flag2)
+            if(!prefab)
             {
                 Main.logger.LogError("ExplosiveTorpedoBehaviour.InitPrefab() -> invalid prefab for torpedo.");
             }
             else
             {
-                GameObject go = new GameObject("TorpedoExplosion", new Type[]
+                try
                 {
-                    typeof(TorpedoExplosionBehaviour)
-                });
-                ModPrefabCache.AddPrefab(go, false);
-                GameObject go2 = ModPrefabCache.AddPrefabCopy(prefab, false);
-                go2.GetComponent<SeamothTorpedo>().explosionPrefab = go;
-                go2.GetComponent<SeamothTorpedo>().homingTorpedo = true;
-                torpedoType = new()
+                    CoroutineHost.StartCoroutine(TorpedoExplosionBehaviour.SetupDetonationPrefabAsync());
+                    Main.logger.LogInfo("Initializing TorpedoExplosionBehaviour TorpedoExplosion prefab...");
+                    GameObject go = new("TorpedoExplosion", new Type[]
+                    {
+                        typeof(TorpedoExplosionBehaviour)
+                    });
+                    ModPrefabCache.AddPrefab(go);
+                    prefab.GetComponent<SeamothTorpedo>().explosionPrefab = go;
+                    prefab.GetComponent<SeamothTorpedo>().homingTorpedo = true;
+                    torpedoType = new()
+                    {
+                        techType = ExplosiveTorpedo.TechType,
+                        prefab = prefab
+                    };
+                }
+                catch(Exception ex)
                 {
-                    techType = ExplosiveTorpedo.techType,
-                    prefab = go2
-                };
+                    Main.logger.LogError($"An error has occured while initializing torpedo prefab.\n{ex}");
+                }
             }
         }
     }
