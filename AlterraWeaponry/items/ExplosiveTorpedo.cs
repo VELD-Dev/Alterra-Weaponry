@@ -1,6 +1,4 @@
-﻿using Nautilus.Assets.PrefabTemplates;
-
-namespace VELD.AlterraWeaponry.Items;
+﻿namespace VELD.AlterraWeaponry.Items;
 
 internal class ExplosiveTorpedo
 {
@@ -42,8 +40,9 @@ internal class ExplosiveTorpedo
         customPrefab.SetGameObject(clone);
         if (!Main.AssetsCache.TryGetAsset("UpgradePopup", out Sprite popupSprite))
             Main.logger.LogError("Unable to load UpgradePopup sprite from cache.");
-        customPrefab.SetUnlock(Coal.TechType)
-            .WithEncyclopediaEntry("Tech/Weaponry", popupSprite);
+        customPrefab.SetUnlock(BlackPowder.TechType)
+            .WithEncyclopediaEntry("Tech/Weaponry", popupSprite)
+            .WithPdaGroupCategoryAfter(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.GasTorpedo);
         customPrefab.SetEquipment(EquipmentType.None);
         customPrefab.SetRecipe(recipe)
             .WithCraftingTime(3f)

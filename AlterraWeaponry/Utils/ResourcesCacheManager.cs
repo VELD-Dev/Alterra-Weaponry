@@ -1,16 +1,6 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿namespace VELD.AlterraWeaponry.Utils;
 
-namespace VELD.AlterraWeaponry.utils;
-
-public class ResourcesManager
+public class ResourcesCacheManager
 {
     private static readonly List<string> ResourcesNames = new()
     {
@@ -29,6 +19,10 @@ public class ResourcesManager
         "Texture2D.BlackPowder",
         "Texture2D.BlackPowder_normal",
         "Texture2D.BlackPowder_spec",
+        "Texture2D.Coal",
+        "Texture2D.Coal_illum",
+        "Texture2D.Coal_normals",
+        "Texture2D.Coal_spec",
         "Texture2D.ModLogo"
     };
 
@@ -50,14 +44,14 @@ public class ResourcesManager
     public Dictionary<string, Mesh> CachedMeshes { get; private set; } = new();
     public Dictionary<string, Sprite> CachedSprites { get; private set; } = new();
     public Dictionary<string, Texture2D> CachedTextures { get; private set; } = new();
-    public ResourcesManager() { }
+    public ResourcesCacheManager() { }
 
-    public static ResourcesManager LoadResources(string path)
+    public static ResourcesCacheManager LoadResources(string path)
     {
         Main.logger.LogInfo("Loading assetbundle...");
         var bundle = AssetBundle.LoadFromFile(path) ?? throw new IOException($"Provided path '{path}' does not contain any assetbundle.");
         RawResources = bundle.LoadAllAssets();
-        var rm = new ResourcesManager();
+        var rm = new ResourcesCacheManager();
 
         Main.logger.LogInfo("Loaded bundle, encaching...");
 
@@ -72,37 +66,37 @@ public class ResourcesManager
                 switch(true)
                 {
                     case true when assetType == "AudioClip":
-                        asset = bundle.LoadAsset<AudioClip>(resName);
+                        asset = bundle.LoadAsset<AudioClip>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
                         rm.CachedAudioClips.Add(assetName, asset as AudioClip);
                         Main.logger.LogInfo($"Added {resName} to rm.CachedAudioClips.");
                     break;
-                    case true when assetType == "GameObject":
-                        asset = bundle.LoadAsset<GameObject>(resName);
+                    case true when assetType == "GameObject" || assetType == "Prefab":
+                        asset = bundle.LoadAsset<GameObject>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
                         rm.CachedPrefabs.Add(assetName, asset as GameObject);
                         Main.logger.LogInfo($"Added {resName} to rm.CachedPrefabs.");
                         break;
                     case true when assetType == "Material":
-                        asset = bundle.LoadAsset<Material>(resName);
+                        asset = bundle.LoadAsset<Material>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
                         rm.CachedMaterials.Add(assetName, asset as Material);
                         Main.logger.LogInfo($"Added {resName} to rm.CachedMaterials.");
                         break;
                     case true when assetType == "Mesh":
-                        asset = bundle.LoadAsset<Mesh>(resName);
+                        asset = bundle.LoadAsset<Mesh>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
                         rm.CachedMeshes.Add(assetName, asset as Mesh);
                         Main.logger.LogInfo($"Added {resName} to rm.CachedMeshes.");
                         break;
                     case true when assetType == "Sprite":
-                        asset = bundle.LoadAsset<Sprite>(resName);
+                        asset = bundle.LoadAsset<Sprite>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
                         rm.CachedSprites.Add(assetName, asset as Sprite);
                         Main.logger.LogInfo($"Added {resName} to rm.CachedSprites.");
                         break;
                     case true when assetType == "Texture2D":
-                        asset = bundle.LoadAsset<Texture2D>(resName);
+                        asset = bundle.LoadAsset<Texture2D>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
                         rm.CachedTextures.Add(assetName, asset as Texture2D);
                         Main.logger.LogInfo($"Added {resName} to rm.CachedTextures.");
                         break;
                     default:
-                        throw new Exception("The type of the asset is not correct.");
+                        throw new Exception("The type of the asset is incorrect.");
                 }
                 Main.logger.LogInfo($"Encached {resName} to key {assetName} and in {assetType}'s cache.");
             }
@@ -111,37 +105,40 @@ public class ResourcesManager
                 Main.logger.LogFatal($"A fatal error has ocurred when loading the resources.\n{ex}");
             }
         }
-        Main.logger.LogDebug(" ");
-        Main.logger.LogDebug("rm.CachedAudioClips = [");
+        var str = new StringBuilder();
+        str.AppendLine("RESOURCES CACHE MANAGER: CACHED CONTENTS:");
+        str.AppendLine(" ");
+        str.AppendLine("rm.CachedAudioClips = [");
         foreach(var asset in rm.CachedAudioClips)
-            Main.logger.LogDebug(asset.ToString());
-        Main.logger.LogDebug("]");
-        Main.logger.LogDebug(" ");
-        Main.logger.LogDebug("rm.CachedPrefabs = [");
+            str.AppendLine($"\t{asset}");
+        str.AppendLine("]");
+        str.AppendLine(" ");
+        str.AppendLine("rm.CachedPrefabs = [");
         foreach(var asset in rm.CachedPrefabs)
-            Main.logger.LogDebug(asset.ToString());
-        Main.logger.LogDebug("]");
-        Main.logger.LogDebug(" ");
-        Main.logger.LogDebug("rm.CachedMaterials = [");
+            str.AppendLine($"\t{asset}");
+        str.AppendLine("]");
+        str.AppendLine(" ");
+        str.AppendLine("rm.CachedMaterials = [");
         foreach (var asset in rm.CachedMaterials)
-            Main.logger.LogDebug(asset.ToString());
-        Main.logger.LogDebug("]");
-        Main.logger.LogDebug(" ");
-        Main.logger.LogDebug("rm.CachedMeshes = [");
+            str.AppendLine($"\t{asset}");
+        str.AppendLine("]");
+        str.AppendLine(" ");
+        str.AppendLine("rm.CachedMeshes = [");
         foreach (var asset in rm.CachedMeshes)
-            Main.logger.LogDebug(asset.ToString());
-        Main.logger.LogDebug("]");
-        Main.logger.LogDebug(" ");
-        Main.logger.LogDebug("rm.CachedSprites = [");
+            str.AppendLine($"\t{asset}");
+        str.AppendLine("]");
+        str.AppendLine(" ");
+        str.AppendLine("rm.CachedSprites = [");
         foreach (var asset in rm.CachedSprites)
-            Main.logger.LogDebug(asset.ToString());
-        Main.logger.LogDebug("]");
-        Main.logger.LogDebug(" ");
-        Main.logger.LogDebug("rm.CachedTextures = [");
+            str.AppendLine($"\t{asset}");
+        str.AppendLine("]");
+        str.AppendLine(" ");
+        str.AppendLine("rm.CachedTextures = [");
         foreach (var asset in rm.CachedTextures)
-            Main.logger.LogDebug(asset.ToString());
-        Main.logger.LogDebug("]");
-        Main.logger.LogDebug(" ");
+            str.AppendLine($"\t{asset}");
+        str.AppendLine("]");
+        str.AppendLine(" ");
+        Main.logger.LogDebug(str.ToString());
         Main.logger.LogInfo("Encached all assets.");
         return rm;
     }

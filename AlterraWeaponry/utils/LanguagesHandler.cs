@@ -39,7 +39,7 @@
             Main.logger.LogInfo("Starting patching the languages !");
             XmlSerializer serializer = new(typeof(LocalizationHandler.LocalizationPackages));
 
-            FileStream fs = new(Path.Combine(ModPath, filename), FileMode.Open);
+            FileStream fs = new(Path.Combine(ModPath, filename), FileMode.Open, FileAccess.Read);
             LocalizationHandler.LocalizationPackages lps;
 
             Main.logger.LogInfo(Language.main.GetCurrentLanguage());
@@ -56,7 +56,7 @@
                 if (Language.main.Get(text.key) != null)
                 {
                     LanguageHandler.SetLanguageLine(text.key, text.value);
-                    Main.logger.LogInfo($"Patched key {text.key} with text '{(text.value.Length > 50 ? text.value.Substring(50) : text.value)}'");
+                    Main.logger.LogInfo($"Patched key {text.key} with text '{(text.value.Length > 50 ? text.value.Substring(0, 50) + "..." : text.value)}'");
                 }
                 else
                 {
@@ -64,6 +64,30 @@
                 }
             }
             Main.logger.LogInfo("Language patching done.");
+        }
+
+        public static void GlobalPatch()
+        {
+            Main.logger.LogInfo("Starting global patching...");
+            XmlSerializer serializer = new(typeof(LocalizationHandler.LocalizationPackages));
+
+            FileStream fs = new(Path.Combine(ModPath, filename), FileMode.Open, FileAccess.Read);
+            LocalizationHandler.LocalizationPackages lps;
+            
+            lps = (LocalizationHandler.LocalizationPackages)serializer.Deserialize(fs);
+
+            foreach (LocalizationHandler.LocalizationPackage locpack in lps.Localizations)
+            {
+                Main.logger.LogInfo(locpack.Lang);
+
+                foreach(LocalizationHandler.Text text in locpack.Texts)
+                {
+                    if (string.IsNullOrEmpty(text.value))
+                        continue;
+                    LanguageHandler.SetLanguageLine(text.key, text.value, locpack.Lang);
+                    Main.logger.LogInfo($"Patched key {text.key} with text '{(text.value.Length > 50 ? text.value.Substring(0, 50) + "..." : text.value)}'");
+                }
+            }
         }
     }
 }

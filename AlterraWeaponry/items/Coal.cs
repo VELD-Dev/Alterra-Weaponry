@@ -10,7 +10,7 @@ internal class Coal
 
     public Coal()
     {
-        Main.logger.LogDebug("Loading Coal prefab info");
+        Main.logger.LogDebug("Loading Coal go info");
         if (!Main.AssetsCache.TryGetAsset("Coal", out Sprite icon))
             Main.logger.LogError("Unable to load Coal Sprite from cache.");
 
@@ -20,7 +20,7 @@ internal class Coal
             .WithSizeInInventory(new(1, 1));
 
         TechType = this.Info.TechType;
-        Main.logger.LogDebug("Loaded Coal prefab and assigned techType");
+        Main.logger.LogDebug("Loaded Coal go and assigned techType");
     }
 
     public void Patch()
@@ -35,20 +35,49 @@ internal class Coal
             }
         };
 
-        Main.logger.LogDebug("Recipe set, now patching prefab.");
+        Main.logger.LogDebug("Recipe set, now patching go.");
 
         CustomPrefab customPrefab = new(this.Info);
-        PrefabTemplate clone = new CloneTemplate(this.Info, TechType.Nickel);
+        PrefabTemplate clone = new CloneTemplate(this.Info, TechType.Sulphur)
+        {
+            ModifyPrefab = (go) =>
+            {
+                var renderer = go.GetComponentInChildren<MeshRenderer>();
+                foreach(var mat in renderer.materials)
+                {
+                    if (Main.AssetsCache.TryGetAsset("Coal", out Texture2D albedo))
+                        mat.SetTexture(ShaderPropertyID._MainTex, albedo);
+
+                    if (Main.AssetsCache.TryGetAsset("Coal_spec", out Texture2D specular))
+                        mat.SetTexture(ShaderPropertyID._SpecTex, specular);
+
+                    if (Main.AssetsCache.TryGetAsset("Coal_illum", out Texture2D illumination))
+                        mat.SetTexture(ShaderPropertyID._Illum, illumination);
+                }
+
+                var vfxFabricating = go.EnsureComponent<VFXFabricating>();
+                MaterialUtils.ApplySNShaders(go);
+            } 
+        };
 
         customPrefab.SetGameObject(clone);
-        customPrefab.SetUnlock(TechType.CreepvineSeedCluster);
+        customPrefab.SetUnlock(TechType.CreepvinePiece)
+            .WithPdaGroupCategoryBefore(TechGroup.Resources, TechCategory.BasicMaterials);
         customPrefab.SetEquipment(EquipmentType.None);
         customPrefab.SetRecipe(recipe)
             .WithCraftingTime(4f)
             .WithFabricatorType(CraftTree.Type.Fabricator)
             .WithStepsToFabricatorTab("Resources", "BasicMaterials");
+        
+        customPrefab.SetOutcropDrop(
+                new(TechType.LimestoneChunk, 0.408f),
+                new(TechType.BreakableGold, 0.159f),
+                new(TechType.BreakableSilver, 0.118f)
+            );
 
         customPrefab.Register();
+
+        BaseBioReactor.charge.Add(TechType, 560f);
 
         Main.logger.LogDebug("Prefab loaded and registered for Coal.");
     }

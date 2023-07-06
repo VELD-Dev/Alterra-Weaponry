@@ -1,7 +1,4 @@
-﻿using System.Linq;
-using VELD.AlterraWeaponry.utils;
-
-namespace VELD.AlterraWeaponry;
+﻿namespace VELD.AlterraWeaponry;
 
 [BepInPlugin(modGUID, modName, modVers)]
 public class Main : BaseUnityPlugin
@@ -10,6 +7,7 @@ public class Main : BaseUnityPlugin
     internal const string modName = "Alterra Weaponry";
     internal const string modGUID = "com.VELD.AlterraWeaponry";
     internal const string modVers = "1.0.5";
+    internal const string modLongVers = "1.0.5.1";
 
     // BepInEx/Harmony/Unity
     private static readonly Harmony harmony = new(modGUID);
@@ -19,7 +17,7 @@ public class Main : BaseUnityPlugin
     internal static StoryGoal AWPresentationGoal;
     internal static ItemGoal AWFirstLethal;
 
-    public static ResourcesManager AssetsCache { get; private set; }
+    public static ResourcesCacheManager AssetsCache { get; private set; }
 
     internal static Options Options { get; } = OptionsPanelHandler.RegisterModOptions<Options>();
 
@@ -28,7 +26,7 @@ public class Main : BaseUnityPlugin
         logger = Logger;
         try
         {
-            AssetsCache = ResourcesManager.LoadResources(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "alterraweaponry.assets"));
+            AssetsCache = ResourcesCacheManager.LoadResources(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "alterraweaponry.assets"));
         }
         catch (Exception ex)
         {
@@ -37,7 +35,7 @@ public class Main : BaseUnityPlugin
         logger.LogInfo($"{modName} {modVers} started patching.");
         harmony.PatchAll();
         logger.LogInfo($"{modName} {modVers} harmony patched.");
-        LanguagesHandler.LanguagePatch();
+        LanguagesHandler.GlobalPatch();
         logger.LogInfo($"{modName} {modVers} languages lines patched.");
         GlobalInitializer.PatchPDAEncyEntries();
         logger.LogInfo($"{modName} {modVers} PDA encyclopedia entries registered.");
@@ -70,33 +68,4 @@ public class Main : BaseUnityPlugin
         logger.LogInfo($"{modName} {modVers} items registered.");
     }
 
-    private void Update()
-    {
-        if(UnityInput.Current.GetKeyDown(KeyCode.P))
-        {
-            logger.LogInfo("Should play audio.");
-            logger.LogInfo("CameraObject defined.");
-            AudioSource audioSource = Instantiate(new GameObject("AudioTest", new[] {
-                typeof(AudioSource)
-            })).GetComponent<AudioSource>();
-
-            logger.LogInfo("audioSource defined.");
-            if(!AssetsCache.TryGetAsset<AudioClip>("PWAPresentation", out var audioAsset))
-                logger.LogError("Audio was not able to load from cache.");
-            try
-            {
-                if (audioSource == null)
-                    logger.LogError("AudioSource is null ??");
-                audioSource.clip = Instantiate((AudioClip)audioAsset);
-                logger.LogInfo("AudioClip defined.");
-                global::Utils.SpawnZeroedAt(audioSource.gameObject, Player.main.transform);
-                audioSource.Play();
-                logger.LogInfo("Should have played an audio.");
-            }
-            catch(Exception e)
-            {
-                logger.LogError(e);
-            }
-        }
-    }
 }

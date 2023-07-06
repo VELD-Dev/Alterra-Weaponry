@@ -1,7 +1,4 @@
-﻿using Nautilus.Assets.Gadgets;
-using static VFXParticlesPool;
-
-namespace VELD.AlterraWeaponry.Items;
+﻿namespace VELD.AlterraWeaponry.Items;
 
 public class PrawnSelfDefenseModule
 {
@@ -53,8 +50,8 @@ public class PrawnSelfDefenseModule
             Main.logger.LogError("Unable to load UpgradePopup sprite from cache.");
 
         customPrefab.SetUnlock(TechType.Polyaniline)
-            .WithEncyclopediaEntry("Tech/Weaponry", popupSprite);
-        
+            .WithEncyclopediaEntry("Tech/Weaponry", popupSprite)
+            .WithPdaGroupCategoryAfter(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitThermalReactorModule);
         customPrefab.SetVehicleUpgradeModule(EquipmentType.ExosuitModule, QuickSlotType.Chargeable)
             .WithEnergyCost(energyCost)
             .WithMaxCharge(maxCharge)

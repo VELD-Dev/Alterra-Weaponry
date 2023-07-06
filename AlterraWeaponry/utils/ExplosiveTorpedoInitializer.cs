@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.Behaviours;
+﻿namespace VELD.AlterraWeaponry.Utils;
 
 internal class ExplosiveTorpedoInitializer // Thanks to Grimm The Second !
 {

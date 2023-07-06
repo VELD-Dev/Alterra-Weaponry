@@ -1,6 +1,4 @@
-﻿using VELD.AlterraWeaponry.Utils;
-
-namespace VELD.AlterraWeaponry.Behaviours;
+﻿namespace VELD.AlterraWeaponry.Behaviours;
 
 internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and PrimeSonic 👌
 {

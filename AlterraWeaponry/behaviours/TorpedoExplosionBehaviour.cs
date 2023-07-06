@@ -1,5 +1,4 @@
-﻿using Nautilus;
-namespace VELD.AlterraWeaponry.Behaviours;
+﻿namespace VELD.AlterraWeaponry.Behaviours;
 
 public class TorpedoExplosionBehaviour : MonoBehaviour
 {

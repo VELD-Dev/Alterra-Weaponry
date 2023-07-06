@@ -1,6 +1,4 @@
-﻿using Nautilus.Assets.PrefabTemplates;
-
-namespace VELD.AlterraWeaponry.Items;
+﻿namespace VELD.AlterraWeaponry.Items;
 
 internal class BlackPowder
 {
@@ -44,13 +42,13 @@ internal class BlackPowder
         CustomPrefab customPrefab = new(this.Info);
 
         customPrefab.SetGameObject(SetupGameObject());
-        customPrefab.SetUnlock(TechType.Creepvine)
+        customPrefab.SetUnlock(Coal.TechType)
             .WithCompoundTechsForUnlock(new()
             {
-                TechType.Creepvine,
-                Coal.TechType,
-                TechType.Sulphur,
-            });
+                TechType.CreepvinePiece,
+                TechType.Sulphur
+            })
+            .WithPdaGroupCategoryBefore(TechGroup.Resources, TechCategory.AdvancedMaterials, TechType.HydrochloricAcid);
         customPrefab.SetEquipment(EquipmentType.None);
         customPrefab.SetRecipe(recipe)
             .WithCraftingTime(2.5f)
@@ -70,6 +68,18 @@ internal class BlackPowder
     {
         Main.logger.LogDebug("Setting up BlackPowder GameObject.");
         Main.logger.LogDebug("Setting shaders.");
+        var renderer = AssetPrefab.EnsureComponent<MeshRenderer>();
+        foreach(var mat in renderer.materials)
+        {
+            if (Main.AssetsCache.TryGetAsset("BlackPowder", out Texture2D albedo))
+                mat.SetTexture(ShaderPropertyID._MainTex, albedo);
+
+            if(Main.AssetsCache.TryGetAsset("BlackPowder_spec", out Texture2D speculars))
+                mat.SetTexture(ShaderPropertyID._SpecTex, speculars);
+
+            if(Main.AssetsCache.TryGetAsset("BlackPowder_normals", out Texture2D normals))
+                mat.SetTexture(ShaderPropertyID._NormalsTex, normals);
+        }
         MaterialUtils.ApplySNShaders(AssetPrefab);
         return AssetPrefab;
     }
