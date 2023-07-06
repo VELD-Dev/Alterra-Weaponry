@@ -34,8 +34,9 @@ Main weapons:
 - **Unity 2019.4.36f1**: Bundling the assets
 
 ### Dependencies
-- **SMLHelper 2.14.1**
-- **BepInEx** (Latest)
+- [**Nautilus v1.0.0-pre.16+**](https://github.com/SubnauticaModding/Nautilus/releases)
+- [**CuddleLibs v1.0.1+**](https://github.com/VELD-Dev/CuddleLibs)
+- [**Tobey's BepInEx Pack**](https://github.com/toebeann/BepInEx.Subnautica/releases)
 
 This C# project is using **.NET 4.7.2** and **C# 11.0**.
 
