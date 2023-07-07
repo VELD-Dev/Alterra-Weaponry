@@ -43,11 +43,6 @@ internal class BlackPowder
 
         customPrefab.SetGameObject(SetupGameObject());
         customPrefab.SetUnlock(Coal.TechType)
-            .WithCompoundTechsForUnlock(new()
-            {
-                TechType.CreepvinePiece,
-                TechType.Sulphur
-            })
             .WithPdaGroupCategoryBefore(TechGroup.Resources, TechCategory.AdvancedMaterials, TechType.HydrochloricAcid);
         customPrefab.SetEquipment(EquipmentType.None);
         customPrefab.SetRecipe(recipe)
