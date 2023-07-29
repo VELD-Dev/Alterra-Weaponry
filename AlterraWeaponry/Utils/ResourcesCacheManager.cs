@@ -4,8 +4,10 @@ public class ResourcesCacheManager
 {
     private static readonly List<string> ResourcesNames = new()
     {
+#if BZ
         "AudioClip.FirstLethalMessage",
         "AudioClip.PWAPresentation",
+#endif
         "GameObject.BlackPowder",
         "GameObject.CustomEventTrigger",
         "Material.BlackPowder",
@@ -44,6 +46,7 @@ public class ResourcesCacheManager
     public Dictionary<string, Mesh> CachedMeshes { get; private set; } = new();
     public Dictionary<string, Sprite> CachedSprites { get; private set; } = new();
     public Dictionary<string, Texture2D> CachedTextures { get; private set; } = new();
+    public Dictionary<Type, Dictionary<string, UnityEngine.Object>> CachedResources { get; private set; } = new();
     public ResourcesCacheManager() { }
 
     public static ResourcesCacheManager LoadResources(string path)
@@ -53,93 +56,26 @@ public class ResourcesCacheManager
         RawResources = bundle.LoadAllAssets();
         var rm = new ResourcesCacheManager();
 
-        Main.logger.LogInfo("Loaded bundle, encaching...");
-
-        foreach (string resName in ResourcesNames)
+        foreach(UnityEngine.Object asset in RawResources)
         {
-            Main.logger.LogInfo($"Trying to encache asset {resName}...");
-            var assetName = resName.Split('.').Last();
-            var assetType = resName.Split('.').First();
-            try
+            var assetName = asset.name.Split('.').Last();
+            if(!rm.CachedResources.ContainsKey(asset.GetType()))
             {
-                UnityEngine.Object asset;
-                switch(true)
-                {
-                    case true when assetType == "AudioClip":
-                        asset = bundle.LoadAsset<AudioClip>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
-                        rm.CachedAudioClips.Add(assetName, asset as AudioClip);
-                        Main.logger.LogInfo($"Added {resName} to rm.CachedAudioClips.");
-                    break;
-                    case true when assetType == "GameObject" || assetType == "Prefab":
-                        asset = bundle.LoadAsset<GameObject>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
-                        rm.CachedPrefabs.Add(assetName, asset as GameObject);
-                        Main.logger.LogInfo($"Added {resName} to rm.CachedPrefabs.");
-                        break;
-                    case true when assetType == "Material":
-                        asset = bundle.LoadAsset<Material>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
-                        rm.CachedMaterials.Add(assetName, asset as Material);
-                        Main.logger.LogInfo($"Added {resName} to rm.CachedMaterials.");
-                        break;
-                    case true when assetType == "Mesh":
-                        asset = bundle.LoadAsset<Mesh>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
-                        rm.CachedMeshes.Add(assetName, asset as Mesh);
-                        Main.logger.LogInfo($"Added {resName} to rm.CachedMeshes.");
-                        break;
-                    case true when assetType == "Sprite":
-                        asset = bundle.LoadAsset<Sprite>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
-                        rm.CachedSprites.Add(assetName, asset as Sprite);
-                        Main.logger.LogInfo($"Added {resName} to rm.CachedSprites.");
-                        break;
-                    case true when assetType == "Texture2D":
-                        asset = bundle.LoadAsset<Texture2D>(resName) ?? throw new KeyNotFoundException($"No resource with name {resName} exists as a {assetType} in the asset bundle.");
-                        rm.CachedTextures.Add(assetName, asset as Texture2D);
-                        Main.logger.LogInfo($"Added {resName} to rm.CachedTextures.");
-                        break;
-                    default:
-                        throw new Exception("The type of the asset is incorrect.");
-                }
-                Main.logger.LogInfo($"Encached {resName} to key {assetName} and in {assetType}'s cache.");
+                rm.CachedResources.Add(asset.GetType(), new() { { assetName, asset } });
+                Main.logger.LogDebug($"Cached {assetName} ({asset.name}) in dictionary of type {asset.GetType().Name}.");
+                continue;
             }
-            catch(Exception ex)
+
+            if (rm.CachedResources.TryGetValue(asset.GetType(), out var ResourcesOfType) && ResourcesOfType.ContainsKey(assetName))
             {
-                Main.logger.LogFatal($"A fatal error has ocurred when loading the resources.\n{ex}");
+                Main.logger.LogError($"An asset of type {asset.GetType().Name} and name {assetName} already exists. Aborting this one.");
+                continue;
             }
+
+            ResourcesOfType.Add(assetName, asset);
+            Main.logger.LogDebug($"Cached {assetName} ({asset.name}) in dictionary of type {asset.GetType().Name}.");
         }
-        var str = new StringBuilder();
-        str.AppendLine("RESOURCES CACHE MANAGER: CACHED CONTENTS:");
-        str.AppendLine(" ");
-        str.AppendLine("rm.CachedAudioClips = [");
-        foreach(var asset in rm.CachedAudioClips)
-            str.AppendLine($"\t{asset}");
-        str.AppendLine("]");
-        str.AppendLine(" ");
-        str.AppendLine("rm.CachedPrefabs = [");
-        foreach(var asset in rm.CachedPrefabs)
-            str.AppendLine($"\t{asset}");
-        str.AppendLine("]");
-        str.AppendLine(" ");
-        str.AppendLine("rm.CachedMaterials = [");
-        foreach (var asset in rm.CachedMaterials)
-            str.AppendLine($"\t{asset}");
-        str.AppendLine("]");
-        str.AppendLine(" ");
-        str.AppendLine("rm.CachedMeshes = [");
-        foreach (var asset in rm.CachedMeshes)
-            str.AppendLine($"\t{asset}");
-        str.AppendLine("]");
-        str.AppendLine(" ");
-        str.AppendLine("rm.CachedSprites = [");
-        foreach (var asset in rm.CachedSprites)
-            str.AppendLine($"\t{asset}");
-        str.AppendLine("]");
-        str.AppendLine(" ");
-        str.AppendLine("rm.CachedTextures = [");
-        foreach (var asset in rm.CachedTextures)
-            str.AppendLine($"\t{asset}");
-        str.AppendLine("]");
-        str.AppendLine(" ");
-        Main.logger.LogDebug(str.ToString());
-        Main.logger.LogInfo("Encached all assets.");
+
         return rm;
     }
 
@@ -154,30 +90,29 @@ public class ResourcesCacheManager
     public T GetAsset<T>(string name) where T : UnityEngine.Object
     {
         Main.logger.LogDebug($"Getting the asset {typeof(T).Name}.{name}...");
-        UnityEngine.Object result = true switch
-        {
-            true when typeof(T) == typeof(AudioClip) => CachedAudioClips[name],
-            true when typeof(T) == typeof(GameObject) => CachedPrefabs[name],
-            true when typeof(T) == typeof(Material) => CachedMaterials[name],
-            true when typeof(T) == typeof(Mesh) => CachedMeshes[name],
-            true when typeof(T) == typeof(Sprite) => CachedSprites[name],
-            true when typeof(T) == typeof(Texture2D) => CachedTextures[name],
-            _ => throw new ArgumentException("The type of T is not recognized as an UnityEngine.Object class or subclass, or it is not supported."),
-        };
-        Main.logger.LogDebug($"Asset found: {((T)result).GetType().Name} '{name}'");
+        
+        if (!CachedResources.TryGetValue(typeof(T), out var AssetsDict))
+            throw new ArgumentException($"There is no dictionary for type '{typeof(T).Name}' does not exist in cached resources.");
 
-        return result as T;
+        if (!AssetsDict.TryGetValue(name, out var asset))
+            throw new ArgumentException($"There is no object in '{typeof(T).Name}' dictionary that matches name '{name}'.");
+
+        if (asset is not T obj)
+            throw new Exception($"For some reason, the asset '{asset.GetType().Name}.{name}' type is not matching the type {typeof(T).Name}");
+
+        return asset as T;
     }
 
     /// <summary>
-    /// Try to get an asset from the resourcescache.
+    /// Try to get an asset from the resources cache.
     /// </summary>
     /// <typeparam name="T">Type of the resource to find.</typeparam>
     /// <param name="name">Name of the resource to find.</param>
     /// <param name="result">Asset found. Null if not found.</param>
     /// <returns>True if the item have been found, otherwise false.</returns>
     /// <exception cref="ArgumentException">If the provided type is not a valid UnityEngine.Object or not supported.</exception>
-    public bool TryGetAsset<T>(string name, out T result) where T : UnityEngine.Object
+    [Obsolete("Use <see cref=\"TryGetAsset{T}(string, out T)t\"/>.")]
+    public bool TryGetAssetLegacy<T>(string name, out T result) where T : UnityEngine.Object
     {
         bool res;
         switch(true)
@@ -208,6 +143,30 @@ public class ResourcesCacheManager
                 return res;
             default:
                 throw new ArgumentException("Type of T is not a valid UnityEngine.Object, or is not supported.");
-        }
+        } 
+    }
+
+    /// <summary>
+    /// Try to get an asset from the resources cache.
+    /// </summary>
+    /// <typeparam name="T">Type of the resource to find.</typeparam>
+    /// <param name="name">Name of the resource to find.</param>
+    /// <param name="result">Asset found. Null if not found.</param>
+    /// <returns>True if the item have been found, otherwise false.</returns>
+    /// <exception cref="ArgumentException">If the provided type is not a valid UnityEngine.Object or not supported.</exception>
+    public bool TryGetAsset<T>(string name, out T result) where T : UnityEngine.Object
+    {
+        result = null;
+        if (!CachedResources.TryGetValue(typeof(T), out var AssetsDict))
+            return false;
+
+        if (!AssetsDict.TryGetValue(name, out var asset))
+            return false;
+
+        if(asset is not T obj)
+            return false;
+
+        result = asset as T;
+        return true;
     }
 }

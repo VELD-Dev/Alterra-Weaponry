@@ -1,8 +1,8 @@
-﻿namespace VELD.AlterraWeaponry.Utils;
+﻿#if BZ
+namespace VELD.AlterraWeaponry.Utils;
 
 internal class GlobalInitializer
 {
-    internal static string AudiosPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Sounds");
     internal static void PatchGoals()
     {
 
@@ -44,8 +44,11 @@ internal class GlobalInitializer
         });
     }
 
+    // This function MUST be an IEnumerator because the SpriteManager is not initialized soon enough for getting the PDA logs icons at time.
     internal static void PatchPDALogs()
     {
+        //yield return new WaitUntil(() => SpriteManager.hasInitialized);
+
         Main.logger.LogInfo($"{Main.modName} {Main.modVers} Registering PDA Logs...");
 
         // Presentation PDA log "Hello xenoworker 91802..."
@@ -61,7 +64,7 @@ internal class GlobalInitializer
                     Main.AWPresentationGoal.key,
                     "Subtitles_AWPresentation",
                     sound: fmodAsset,
-                    SpriteManager.Get(SpriteManager.Group.Log, "Pda")
+                    SpriteManagerAwaiter.Get(SpriteManager.Group.Log, "Pda").Result
                 );
             }
             else
@@ -109,15 +112,6 @@ internal class GlobalInitializer
 
     internal static void PatchPDAEncyEntries()
     {
-        // Register AWModInfo entry
-        PDAHandler.AddEncyclopediaEntry(
-            "AWModInfo",
-            "Meta",
-            null,
-            null,
-            unlockSound: PDAHandler.UnlockBasic
-        );
-
         // Prawn laser arm entry
         PDAHandler.AddEncyclopediaEntry(
             "PrawnLaserArm",
@@ -136,3 +130,4 @@ internal class GlobalInitializer
         );
     }
 }
+#endif

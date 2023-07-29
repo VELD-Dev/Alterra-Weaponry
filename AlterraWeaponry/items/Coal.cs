@@ -10,7 +10,6 @@ internal class Coal
 
     public Coal()
     {
-        Main.logger.LogDebug("Loading Coal go info");
         if (!Main.AssetsCache.TryGetAsset("Coal", out Sprite icon))
             Main.logger.LogError("Unable to load Coal Sprite from cache.");
 
@@ -20,7 +19,6 @@ internal class Coal
             .WithSizeInInventory(new(1, 1));
 
         TechType = this.Info.TechType;
-        Main.logger.LogDebug("Loaded Coal go and assigned techType");
     }
 
     public void Patch()
@@ -34,8 +32,6 @@ internal class Coal
                 new(TechType.CreepvinePiece, 1)
             }
         };
-
-        Main.logger.LogDebug("Recipe set, now patching go.");
 
         CustomPrefab customPrefab = new(this.Info);
         PrefabTemplate clone = new CloneTemplate(this.Info, TechType.Sulphur)
@@ -71,8 +67,13 @@ internal class Coal
         
         customPrefab.SetOutcropDrop(
                 new(TechType.LimestoneChunk, 0.408f),
+#if BZ
                 new(TechType.BreakableGold, 0.159f),
                 new(TechType.BreakableSilver, 0.118f)
+#elif SN1
+                new(TechType.SandstoneChunk, 0.159f),
+                new(TechType.ShaleChunk, 0.118f)
+#endif
             );
 
         customPrefab.Register();

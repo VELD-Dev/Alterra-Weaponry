@@ -1,4 +1,4 @@
-﻿namespace VELD.AlterraWeaponry.Patches;
+﻿/*namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(ItemGoalTracker))]
 internal class ItemGoalTracker_Start_Patch
@@ -44,4 +44,4 @@ internal class ItemGoalTracker_Start_Patch
 
         __instance.goalData.goals = goals;
     }
-}
+}*/

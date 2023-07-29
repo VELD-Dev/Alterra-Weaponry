@@ -11,7 +11,6 @@ internal class BlackPowder
 
     public BlackPowder()
     {
-        Main.logger.LogDebug("Loading BlackPowder prefab info");
         if (!Main.AssetsCache.TryGetAsset("BlackPowder", out Sprite icon))
             Main.logger.LogError("Unable to load BlackPowder sprite from cache.");
 
@@ -20,12 +19,10 @@ internal class BlackPowder
             .WithIcon(icon)
             .WithSizeInInventory(new(1, 1));
         TechType = this.Info.TechType;
-        Main.logger.LogDebug("Loaded BlackPowder prefab info and assigned TechType");
     }
 
     public void Patch()
     {
-        Main.logger.LogDebug("Loading BlackPowder recipe");
         RecipeData recipe = new()
         {
             craftAmount = 1,
@@ -36,8 +33,6 @@ internal class BlackPowder
                 new(TechType.JeweledDiskPiece, 3)
             }
         };
-
-        Main.logger.LogDebug("Loaded BlackPowder recipe, loading custom prefab...");
 
         CustomPrefab customPrefab = new(this.Info);
 

@@ -19,6 +19,8 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
     {
         if (seamothElectricalDefensePrefab is not null) yield break;
         Main.logger.LogDebug("Updating defense prefab for ZapFunctionalityBehaviour.ElectricalDefensePrefab.");
+
+#if BZ
         var task = CraftData.GetPrefabForTechTypeAsync(TechType.SeaTruck);
         yield return task;
         var prefab = task.GetResult();
@@ -26,6 +28,16 @@ internal class ZapFunctionalityBehaviour : MonoBehaviour // Thanks to ECM and Pr
         if (prefab == null) yield break;
 
         seamothElectricalDefensePrefab = prefab.GetComponent<SeaTruckUpgrades>().electricalDefensePrefab;
+#elif SN1
+        var task = CraftData.GetPrefabForTechTypeAsync(TechType.Seamoth);
+        yield return task;
+        var prefab = task.GetResult();
+
+        if (prefab == null) yield break;
+
+        seamothElectricalDefensePrefab = prefab.GetComponent<SeaMoth>().seamothElectricalDefensePrefab;
+#endif
+
         Main.logger.LogDebug("Done !");
     }
     public bool Zap(Vehicle vehicle, int usedSlotID, float charge, float chargeScalar)

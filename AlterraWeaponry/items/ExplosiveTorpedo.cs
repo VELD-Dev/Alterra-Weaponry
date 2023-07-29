@@ -38,11 +38,16 @@ internal class ExplosiveTorpedo
         CloneTemplate clone = new(Info, TechType.GasTorpedo);
 
         customPrefab.SetGameObject(clone);
+        var scanningGadget = customPrefab.SetUnlock(BlackPowder.TechType);
+        scanningGadget.WithPdaGroupCategoryAfter(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.GasTorpedo);
+
+#if BZ  // This sets the popup on BZ if it can find it.
         if (!Main.AssetsCache.TryGetAsset("UpgradePopup", out Sprite popupSprite))
             Main.logger.LogError("Unable to load UpgradePopup sprite from cache.");
-        customPrefab.SetUnlock(BlackPowder.TechType)
-            .WithEncyclopediaEntry("Tech/Weaponry", popupSprite)
-            .WithPdaGroupCategoryAfter(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.GasTorpedo);
+        else
+            scanningGadget.WithEncyclopediaEntry("Tech/Weaponry", popupSprite);
+#endif
+
         customPrefab.SetEquipment(EquipmentType.None);
         customPrefab.SetRecipe(recipe)
             .WithCraftingTime(3f)

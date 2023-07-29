@@ -44,7 +44,6 @@ global using UnityEngine;
 global using UnityEditor;
 global using UnityEngine.Events;
 global using UWE;
-global using UWE.Timeline;
 global using UWEScript;
 global using FMOD;
 

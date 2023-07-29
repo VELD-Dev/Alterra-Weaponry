@@ -42,16 +42,26 @@ public class PrawnSelfDefenseModule
         };
 
         CustomPrefab customPrefab = new(this.Info);
-        CloneTemplate clone = new(this.Info, TechType.SeaTruckUpgradePerimeterDefense);
+
+        CloneTemplate clone = new(this.Info,
+#if BZ
+            TechType.SeaTruckUpgradePerimeterDefense
+#elif SN1
+            TechType.SeamothElectricalDefense
+#endif
+        );
 
         customPrefab.SetGameObject(clone);
 
+        var scanningGadget = customPrefab.SetUnlock(TechType.Polyaniline);
+        scanningGadget.WithPdaGroupCategoryAfter(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitThermalReactorModule);
+#if BZ  // Sets this only on BZ if it can find it.
         if (!Main.AssetsCache.TryGetAsset("UpgradePopup", out Sprite popupSprite))
             Main.logger.LogError("Unable to load UpgradePopup sprite from cache.");
+        else
+            scanningGadget.WithEncyclopediaEntry("Tech/Weaponry", popupSprite);
+#endif
 
-        customPrefab.SetUnlock(TechType.Polyaniline)
-            .WithEncyclopediaEntry("Tech/Weaponry", popupSprite)
-            .WithPdaGroupCategoryAfter(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitThermalReactorModule);
         customPrefab.SetVehicleUpgradeModule(EquipmentType.ExosuitModule, QuickSlotType.Chargeable)
             .WithEnergyCost(energyCost)
             .WithMaxCharge(maxCharge)

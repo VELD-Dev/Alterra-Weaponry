@@ -45,7 +45,7 @@ public class TorpedoExplosionBehaviour : MonoBehaviour
 
         GameObject prefab;
 
-#if BELOWZERO
+#if BZ
         prefab = VFXWeatherManager.main.meteorController.closeUpPrefab;
 
         if(prefab.GetComponent<VFXMeteor>() == null)
@@ -53,8 +53,11 @@ public class TorpedoExplosionBehaviour : MonoBehaviour
             Main.logger.LogError($"{typeof(TorpedoExplosionBehaviour).FullName}: No VFXMeteor found in the closeupPrefab.");
             yield break;
         }
+#else
+        var task = PrefabDatabase.GetPrefabAsync("db6907f8-2c37-4d0b-8eac-1b1e3b59fa71");
+        yield return task;
+        task.TryGetPrefab(out prefab);
 #endif
-
         yield return prefab;
         detonationPrefab = prefab;
         Main.logger.LogInfo($"{typeof(TorpedoExplosionBehaviour).FullName}: Detonation prefab set up.");

@@ -1,4 +1,5 @@
-﻿namespace VELD.AlterraWeaponry.Patches;
+﻿#if BZ
+namespace VELD.AlterraWeaponry.Patches;
 
 [HarmonyPatch(typeof(uGUI_SceneLoading))]
 public class uGUISceneLoading_End_Patch
@@ -13,3 +14,4 @@ public class uGUISceneLoading_End_Patch
         Main.logger.LogInfo("Should play or have played AWPresentationGoal.");
     }
 }
+#endif

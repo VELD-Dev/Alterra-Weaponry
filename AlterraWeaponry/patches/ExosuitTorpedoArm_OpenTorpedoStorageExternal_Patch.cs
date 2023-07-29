@@ -18,7 +18,7 @@ public class ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch // Thanks to Gri
         }
         catch(Exception e)
         {
-            Main.logger.LogDebug(e);
+            Main.logger.LogError(e);
         }
     }
 }

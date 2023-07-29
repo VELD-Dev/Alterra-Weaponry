@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlterraWeaponry", "AlterraWeaponry\AlterraWeaponry.csproj", "{63FE731A-D0D0-4971-9B5D-F21A11D77324}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Éléments de solution", "Éléments de solution", "{2F533DAE-EEEA-400A-AB64-B214F2737359}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Below Zero|Any CPU = Below Zero|Any CPU

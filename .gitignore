@@ -61,3 +61,6 @@ _ReSharper*/
 project.lock.json
 project.fragment.lock.json
 artifacts/
+
+# Additional files
+AlterraWeaponry/game-dirs.txt

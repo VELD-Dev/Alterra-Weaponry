@@ -42,27 +42,34 @@
     <OutputPath>bin\SN1\</OutputPath>
     <DefineConstants>SN1; SN; SUBNAUTICA;</DefineConstants>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\core\0Harmony.dll</HintPath>
+  <ItemGroup Condition="'$(Configuration)'=='SN1' Or '$(Configuration)'=='Release' Or '$(Configuration)'=='Debug'">
+    <Reference Include="Nautilus">
+      <HintPath>B:\SteamLibrary\steamapps\common\Subnautica\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass">
-      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
+    <Reference Include="CuddleLibs">
+      <HintPath>B:\SteamLibrary\steamapps\common\Subnautica\BepInEx\plugins\CuddleLibs\CuddleLibs.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='BZ'">
     <Reference Include="Assembly-CSharp_publicized">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
     </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\core\BepInEx.dll</HintPath>
+    <Reference Include="Nautilus">
+      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
     </Reference>
     <Reference Include="CuddleLibs">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\plugins\CuddleLibs\CuddleLibs.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
     <Reference Include="FMODUnity">
       <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\FMODUnity.dll</HintPath>
-    </Reference>
-    <Reference Include="Nautilus">
-      <HintPath>B:\SteamLibrary\steamapps\common\SubnauticaZero\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -117,6 +124,7 @@
     <Compile Include="Items\PrawnSelfDefenseModule.cs" />
     <Compile Include="Patches\ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch.cs" />
     <Compile Include="Patches\SeamothTorpedo_OnEnergyDepleted_Patch.cs" />
+    <Compile Include="Patches\SeaMoth_OpenTorpedoStorage_Patch.cs" />
     <Compile Include="Utils\ExplosiveTorpedoInitializer.cs" />
     <Compile Include="Behaviours\TorpedoExplosionBehaviour.cs" />
     <Compile Include="Global.cs" />
@@ -132,22 +140,40 @@
     <Compile Include="Utils\LanguagesHandler.cs" />
     <Compile Include="Utils\Options.cs" />
     <Compile Include="Utils\ResourcesCacheManager.cs" />
+    <Compile Include="Utils\SpriteManagerAwaiter.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
     <Content Include="Localizations.xml" />
-    <None Include="Sounds\AudioClip.FirstLethalMessage.wav" />
-    <None Include="Sounds\AudioClip.PWAPresentation.wav" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mod.json" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>mkdir "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry"
-copy /Y "$(TargetPath)" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"
-copy /Y "$(ProjectDir)\alterraweaponry.assets" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"
-copy /Y "$(ProjectDir)\alterraweaponry.assets.meta" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"
-copy /Y "$(ProjectDir)\Localizations.xml" "$(SubnauticaRootPath)\BepInEx\plugins\AlterraWeaponry\"</PostBuildEvent>
-  </PropertyGroup>
+  <Target Name="CopyToTargetDir" AfterTargets="Build">
+    <Copy SourceFiles="$(TargetPath);../LICENSE;$()" DestinationFolder="bin/$(Configuration)" />
+    <WriteLinesToFile File="bin/$(Configuration)/load-order.txt" Overwrite="True" />
+    <MakeDir Directories="bin/$(Configuration)/plugins" />
+  </Target>
+  <Target Name="CopyToModsDir" AfterTargets="CopyToTargetDir" Condition="'$(Configuration)' == 'Debug' And Exists('game-dirs.txt')">
+    <ReadLinesFromFile File="game-dirs.txt">
+      <Output TaskParameter="Lines" ItemName="GameDirs" />
+    </ReadLinesFromFile>
+    <CreateItem Include="bin/$(Configuration)/*">
+      <Output TaskParameter="Include" ItemName="TargetFiles" />
+    </CreateItem>
+    <CreateProperty Value="BepInEx/plugins/$(ProjectName)">
+      <Output TaskParameter="Value" PropertyName="PluginDir" />
+    </CreateProperty>
+    <Copy SourceFiles="@(TargetFiles)" DestinationFolder="%(GameDirs.Identity)/$(PluginDir)" />
+    <MakeDir Directories="%(GameDirs.Identity)/$(PluginDir)" />
+  </Target>
+  <Target Name="ZipDist" AfterTargets="CopyToTargetDir" Condition="'$(Configuration)' == 'Release'">
+    <CreateItem Include="bin/$(Configuration)/**/*">
+      <Output TaskParameter="Include" ItemName="TargetFiles" />
+    </CreateItem>
+    <Copy SourceFiles="@(TargetFiles)" DestinationFolder="bin/built/$(ProjectName)" />
+    <MakeDir Directories="bin/built/$(ProjectName)/" />
+    <ZipDirectory SourceDirectory="bin/built" DestinationFile="bin/$(ProjectName).$(ConfigurationName).zip" Overwrite="True" />
+  </Target>
 </Project>

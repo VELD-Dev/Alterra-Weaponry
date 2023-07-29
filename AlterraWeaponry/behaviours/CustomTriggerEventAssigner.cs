@@ -1,4 +1,5 @@
-﻿namespace VELD.AlterraWeaponry.Behaviours;
+﻿#if BZ
+namespace VELD.AlterraWeaponry.Behaviours;
 
 public class CustomTriggerStoryGoalAssigner : MonoBehaviour
 {
@@ -52,3 +53,4 @@ public class CustomTriggerStoryGoalAssigner : MonoBehaviour
     }
 
 }
+#endif
