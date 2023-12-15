@@ -3,7 +3,7 @@
 [![total downloads](https://img.shields.io/github/downloads/VELD-Dev/Alterra-Weaponry/total?color=success&logo=github)](https://github.com/VELD-Dev/Alterra-Weaponry/downloads "Total downloads, including pre-releases, of the mod")
 [![license](https://img.shields.io/github/license/VELD-Dev/Alterra-Weaponry)](https://github.com/VELD-Dev/Alterra-Weaponry/blob/main/LICENSE "License")  
 Alterra Weaponry is a mod for **Subnautica: Below Zero** (Subnautica soon) that adds weapons, while remaining cannon with the game lore (Obraxis Prime Massacre).  
-This mod an its lore has **no certification** from **UWE**, do not take the story of the mod as reality.  
+This mod and its lore has **no certification** from **UWE**, do not take the story of the mod as reality.  
 
 ## Languages available
 - **English** (translated by me)
