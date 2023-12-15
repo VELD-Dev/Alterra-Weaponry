@@ -1,4 +1,6 @@
-﻿namespace VELD.AlterraWeaponry.Items;
+﻿using CuddleLibs.Interfaces;
+
+namespace VELD.AlterraWeaponry.Items;
 
 internal class Coal
 {
@@ -26,11 +28,11 @@ internal class Coal
         Main.logger.LogDebug("Setting Coal recipe");
         RecipeData recipe = new()
         {
-            craftAmount = 4,
-            Ingredients = new()
-            {
+            craftAmount = 2,
+            Ingredients =
+            [
                 new(TechType.CreepvinePiece, 1)
-            }
+            ]
         };
 
         CustomPrefab customPrefab = new(this.Info);
@@ -64,17 +66,17 @@ internal class Coal
             .WithCraftingTime(4f)
             .WithFabricatorType(CraftTree.Type.Fabricator)
             .WithStepsToFabricatorTab("Resources", "BasicMaterials");
-        
-        customPrefab.SetOutcropDrop(
-                new(TechType.LimestoneChunk, 0.408f),
+
+        OutcropsUtils.EnsureOutcropDrop(
+            (TechType.LimestoneChunk, TechType, 0.408f),
 #if BZ
-                new(TechType.BreakableGold, 0.159f),
-                new(TechType.BreakableSilver, 0.118f)
+            (TechType.BreakableGold, TechType, 0.159f),
+            (TechType.BreakableSilver, TechType, 0.118f)
 #elif SN1
-                new(TechType.SandstoneChunk, 0.159f),
-                new(TechType.ShaleChunk, 0.118f)
+            (TechType.SandstoneChunk, TechType, 0.159f),
+            (TechType.ShaleChunk, TechType, 0.118f)
 #endif
-            );
+        );
 
         customPrefab.Register();
 

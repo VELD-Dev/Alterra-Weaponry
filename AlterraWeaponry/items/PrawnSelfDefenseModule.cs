@@ -32,13 +32,13 @@ public class PrawnSelfDefenseModule
         RecipeData recipe = new()
         {
             craftAmount = 1,
-            Ingredients = new()
-            {
+            Ingredients =
+            [
                 new(TechType.AdvancedWiringKit, 1),
                 new(TechType.AluminumOxide, 2),
                 new(TechType.PowerCell, 2),
                 new(TechType.Polyaniline, 1)
-            }
+            ]
         };
 
         CustomPrefab customPrefab = new(this.Info);
@@ -55,11 +55,17 @@ public class PrawnSelfDefenseModule
 
         var scanningGadget = customPrefab.SetUnlock(TechType.Polyaniline);
         scanningGadget.WithPdaGroupCategoryAfter(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.ExosuitThermalReactorModule);
+        scanningGadget.WithCompoundTechsForUnlock([TechType.Polyaniline, TechType.Gold]);
 #if BZ  // Sets this only on BZ if it can find it.
         if (!Main.AssetsCache.TryGetAsset("UpgradePopup", out Sprite popupSprite))
+        {
             Main.logger.LogError("Unable to load UpgradePopup sprite from cache.");
+        }
         else
+        {
             scanningGadget.WithEncyclopediaEntry("Tech/Weaponry", popupSprite);
+            scanningGadget.WithAnalysisTech(popupSprite, PDAHandler.UnlockImportant);
+        }
 #endif
 
         customPrefab.SetVehicleUpgradeModule(EquipmentType.ExosuitModule, QuickSlotType.Chargeable)

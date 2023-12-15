@@ -7,7 +7,7 @@ public class Main : BaseUnityPlugin
     internal const string modName = "Alterra Weaponry";
     internal const string modGUID = "com.VELD.AlterraWeaponry";
     internal const string modVers = "1.0.5";
-    internal const string modLongVers = "1.0.5.1";
+    internal const string modLongVers = "1.0.5.2";
 
     // BepInEx/Harmony/Unity
     private static readonly Harmony harmony = new(modGUID);

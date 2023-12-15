@@ -26,12 +26,12 @@ internal class BlackPowder
         RecipeData recipe = new()
         {
             craftAmount = 1,
-            Ingredients = new()
-            {
+            Ingredients =
+            [
                 new(Coal.TechType, 1),
                 new(TechType.Sulphur, 1),
                 new(TechType.JeweledDiskPiece, 3)
-            }
+            ]
         };
 
         CustomPrefab customPrefab = new(this.Info);

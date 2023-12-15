@@ -27,11 +27,11 @@ internal class ExplosiveTorpedo
         RecipeData recipe = new()
         {
             craftAmount = 2,
-            Ingredients = new()
-            {
+            Ingredients =
+            [
                 new(BlackPowder.TechType, 2),
                 new(TechType.Titanium, 1)
-            }
+            ]
         };
 
         CustomPrefab customPrefab = new(Info);
@@ -40,12 +40,18 @@ internal class ExplosiveTorpedo
         customPrefab.SetGameObject(clone);
         var scanningGadget = customPrefab.SetUnlock(BlackPowder.TechType);
         scanningGadget.WithPdaGroupCategoryAfter(TechGroup.VehicleUpgrades, TechCategory.VehicleUpgrades, TechType.GasTorpedo);
+        scanningGadget.WithCompoundTechsForUnlock([ Coal.TechType ]);
 
 #if BZ  // This sets the popup on BZ if it can find it.
         if (!Main.AssetsCache.TryGetAsset("UpgradePopup", out Sprite popupSprite))
+        {
             Main.logger.LogError("Unable to load UpgradePopup sprite from cache.");
+        }
         else
+        {
             scanningGadget.WithEncyclopediaEntry("Tech/Weaponry", popupSprite);
+            scanningGadget.WithAnalysisTech(popupSprite, PDAHandler.UnlockImportant);
+        }
 #endif
 
         customPrefab.SetEquipment(EquipmentType.None);
