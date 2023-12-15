@@ -39,13 +39,3 @@ Main weapons:
 - [**Tobey's BepInEx Pack**](https://github.com/toebeann/BepInEx.Subnautica/releases)
 
 This C# project is using **.NET 4.7.2** and **C# 12.0**.
-
-### Ultra Mega Super Special Thanks to:
-- **EldritchCarMaker** for learning me how to mod basically, and giving me some advices for the PRAWN Self Defense module
-- **Metious** for explaining me how the Story Goals, PDA Logs and all that were working
-- **TomStone** for making me the beautiful icons of the PRAWN Shield Module, PRAWN Self Defense module, Explosive torpedo and Coal
-- **tobey** for helping me with the LanguagesHandler I specifically made for my mod
-- **PrimeSonic** for helping me with XML Serialization/Deserialization
-- **Grimm The Second** for helping me so much with the explosive torpedo
-- **All the people in the `Localizations.xml` file, they are all mentioned in their own language on the Meta page, they made a great job in translating the mod in 3 different languages !**
-- And a lot of people from the **[Subnautica Modding Discord](https://discord.gg/7M7cJWXMRe)** ! They are really fantastic !
