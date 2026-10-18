@@ -64,3 +64,8 @@ artifacts/
 
 # Additional files
 AlterraWeaponry/game-dirs.txt
+# Local binary dependencies (see CuddleLibsPath in Directory.Build.props)
+libs/
+
+# JetBrains Rider
+.idea/

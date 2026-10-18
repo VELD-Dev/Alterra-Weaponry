@@ -1,194 +1,171 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{63FE731A-D0D0-4971-9B5D-F21A11D77324}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>VELD.AlterraWeaponry</RootNamespace>
+    <TargetFramework>net472</TargetFramework>
     <AssemblyName>AlterraWeaponry</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <RootNamespace>VELD.AlterraWeaponry</RootNamespace>
     <LangVersion>12.0</LangVersion>
-    <FileAlignment>512</FileAlignment>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Deterministic>true</Deterministic>
+
+    <!-- Properties/AssemblyInfo.cs declares these by hand (it reads Main.modVers),
+         so the SDK must not generate a second set of the same attributes. -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+
+    <!-- Game assemblies are Mono-built and ship no XML docs or strong names;
+         these warnings are pure noise against them. -->
+    <NoWarn>$(NoWarn);CS0436;MSB3277</NoWarn>
+
+    <!-- BepInEx loads plugins from a flat folder, so keep the pre-SDK bin/<Config>/
+         layout rather than the SDK's bin/<Config>/net472/. -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+  <!-- ==================== Game selection ==================== -->
+
+  <!--
+    Every configuration must pick a game. Several sources are only valid with one of
+    the two defines set: Coal.Patch and PrawnSelfDefenseModule.Patch both wrap
+    argument lists in #if BZ / #elif SN1 with no #else, so with neither define the
+    argument list collapses to a trailing comma and the file stops parsing.
+
+    BZ and SN1 pin the game; Debug and Release default to Below Zero (what mod.json
+    targets) and can be flipped with -p:Game=Subnautica.
+  -->
+  <PropertyGroup>
+    <Game Condition="'$(Configuration)' == 'BZ'">BelowZero</Game>
+    <Game Condition="'$(Configuration)' == 'SN1'">Subnautica</Game>
+    <Game Condition="'$(Game)' == ''">BelowZero</Game>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Game)' == 'BelowZero'">
+    <DefineConstants>$(DefineConstants);BZ;BELOWZERO;BELOW_ZERO</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'BZ|AnyCPU' ">
-    <OutputPath>bin\BZ\</OutputPath>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DefineConstants>BZ; BELOWZERO; BELOW_ZERO;</DefineConstants>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+
+  <PropertyGroup Condition="'$(Game)' == 'Subnautica'">
+    <DefineConstants>$(DefineConstants);SN1;SN;SUBNAUTICA</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'SN1|AnyCPU' ">
-    <OutputPath>bin\SN1\</OutputPath>
-    <DefineConstants>SN1; SN; SUBNAUTICA;</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(Configuration)'=='BZ'">
-    <Reference Include="Nautilus, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\BepInEx\plugins\Nautilus\Nautilus.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="0Harmony">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\BepInEx\core\0Harmony.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass_publicized">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp-firstpass_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="Assembly-CSharp_publicized">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\publicized_assemblies\Assembly-CSharp_publicized.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\BepInEx\core\BepInEx.dll</HintPath>
-    </Reference>
-    <Reference Include="CuddleLibs, Version=1.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\BepInEx\plugins\CuddleLibs\CuddleLibs.dll</HintPath>
-    </Reference>
-    <Reference Include="FMODUnity">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\FMODUnity.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
-    <Reference Include="Unity.Addressables">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\Unity.Addressables.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.Collections">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\Unity.Collections.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.ResourceManager">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\Unity.ResourceManager.dll</HintPath>
-    </Reference>
-    <Reference Include="Unity.TextMeshPro">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\Unity.TextMeshPro.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AssetBundleModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.AudioModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.AudioModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.InputModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.InputModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.JSONSerializeModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.JSONSerializeModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.ParticleSystemModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.ParticleSystemModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.PhysicsModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.TextCoreModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.TextCoreModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.UI.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UIElementsModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.UIElementsModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.UIModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.UIModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.VehiclesModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.VehiclesModule.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEngine.VFXModule">
-      <HintPath>B:\soft\Steam\steamapps\common\SubnauticaZero\SubnauticaZero_Data\Managed\UnityEngine.VFXModule.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Behaviours\CustomTriggerEventAssigner.cs" />
-    <Compile Include="Behaviours\ZapFunctionalityBehaviour.cs" />
-    <Compile Include="Items\PrawnSelfDefenseModule.cs" />
-    <Compile Include="Patches\ExosuitTorpedoArm_OpenTorpedoStorageExternal_Patch.cs" />
-    <Compile Include="Patches\SeamothTorpedo_OnEnergyDepleted_Patch.cs" />
-    <Compile Include="Patches\SeaMoth_OpenTorpedoStorage_Patch.cs" />
-    <Compile Include="Utils\ExplosiveTorpedoInitializer.cs" />
-    <Compile Include="Behaviours\TorpedoExplosionBehaviour.cs" />
-    <Compile Include="Global.cs" />
-    <Compile Include="Items\BlackPowder.cs" />
-    <Compile Include="Items\Coal.cs" />
-    <Compile Include="Items\ExplosiveTorpedo.cs" />
-    <Compile Include="Main.cs" />
-    <Compile Include="Patches\ItemGoalTracker_Start_Patch.cs" />
-    <Compile Include="Patches\uGUISceneLoading_End_Patch.cs" />
-    <Compile Include="Patches\Vehicle_Awake_Patch.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Utils\GlobalInitializer.cs" />
-    <Compile Include="Utils\LanguagesHandler.cs" />
-    <Compile Include="Utils\Options.cs" />
-    <Compile Include="Utils\ResourcesCacheManager.cs" />
-    <Compile Include="Utils\SpriteManagerAwaiter.cs" />
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Content Include="Localizations.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="mod.json" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="CopyToTargetDir" AfterTargets="Build">
-    <Copy SourceFiles="$(TargetPath);../LICENSE;$()" DestinationFolder="bin/$(Configuration)" />
-    <WriteLinesToFile File="bin/$(Configuration)/load-order.txt" Overwrite="True" />
-    <MakeDir Directories="bin/$(Configuration)/plugins" />
+
+  <Target Name="CheckGame" BeforeTargets="CoreCompile"
+          Condition="'$(Game)' != 'BelowZero' And '$(Game)' != 'Subnautica'">
+    <Error Code="AW0002" Text="Game must be 'BelowZero' or 'Subnautica', but was '$(Game)'." />
   </Target>
-  <Target Name="CopyToModsDir" AfterTargets="CopyToTargetDir" Condition="'$(Configuration)' == 'Debug' And Exists('game-dirs.txt')">
+
+  <!-- ==================== Configurations ==================== -->
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DefineConstants>$(DefineConstants);DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' != 'Debug'">
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
+
+  <!-- ==================== References ==================== -->
+
+  <!--
+    IncludeAssets="compile" on everything the game already provides. Without it these
+    land in bin/ and get zipped into the release: BepInEx would then load stripped
+    reference copies of Assembly-CSharp and Nautilus out of the plugin folder,
+    shadowing the real ones. They are reference-only, never redistributed.
+  -->
+  <ItemGroup>
+    <PackageReference Include="BepInEx.Core" Version="5.4.21" IncludeAssets="compile" />
+    <PackageReference Include="UnityEngine.Modules" Version="2019.4.36" IncludeAssets="compile" />
+    <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
+    <!-- Backfills the compiler-required types (IsExternalInit, RequiredMember, ...)
+         that let C# 12 syntax compile against net472. -->
+    <PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Publicized game assemblies + the matching Nautilus build, per game.
+       Both GameLibs packages carry Assembly-CSharp.dll, so exactly one may be
+       referenced at a time; hence the per-game split. -->
+  <ItemGroup Condition="'$(Game)' == 'BelowZero'">
+    <PackageReference Include="Subnautica.BelowZero.GameLibs" Version="53115.0.0-r.0" IncludeAssets="compile" />
+    <PackageReference Include="SubnauticaZero.Nautilus" Version="1.*-*" IncludeAssets="compile" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Game)' == 'Subnautica'">
+    <PackageReference Include="Subnautica.GameLibs" Version="82304.0.0-r.0" IncludeAssets="compile" />
+    <PackageReference Include="Subnautica.Nautilus" Version="1.*-*" IncludeAssets="compile" />
+    <PackageReference Include="Unity.InputSystem" Version="1.4.1" IncludeAssets="compile" />
+  </ItemGroup>
+
+  <!-- CuddleLibs is not on any NuGet feed; see CuddleLibsPath in Directory.Build.props. -->
+  <ItemGroup Condition="Exists('$(CuddleLibsPath)')">
+    <Reference Include="CuddleLibs">
+      <HintPath>$(CuddleLibsPath)</HintPath>
+      <!-- ships as its own BepInEx plugin, so it must not be copied next to this mod -->
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="CheckCuddleLibs" BeforeTargets="CoreCompile" Condition="!Exists('$(CuddleLibsPath)')">
+    <Error Code="AW0001"
+           Text="CuddleLibs.dll was not found at '$(CuddleLibsPath)'. It is not published to NuGet, so copy it from a BepInEx install (BepInEx/plugins/CuddleLibs/CuddleLibs.dll) into '$(MSBuildThisFileDirectory)../libs/', or build with -p:CuddleLibsPath=/absolute/path/to/CuddleLibs.dll" />
+  </Target>
+
+  <!-- ==================== Content ==================== -->
+
+  <ItemGroup>
+    <None Include="mod.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Localizations.xml" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- Main.Awake loads "<prefix>.alterraweaponry.assets" from the assembly directory,
+       so the bundle for the targeted game has to land in the output folder. -->
+  <ItemGroup>
+    <None Include="bz.alterraweaponry.assets"
+          Condition="'$(Game)' == 'BelowZero'"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="sn.alterraweaponry.assets"
+          Condition="'$(Game)' == 'Subnautica'"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- ==================== Packaging ==================== -->
+
+  <Target Name="CopyLicense" AfterTargets="Build">
+    <Copy SourceFiles="$(MSBuildThisFileDirectory)../LICENSE" DestinationFolder="$(OutDir)" />
+  </Target>
+
+  <!-- Debug only: push the built plugin straight into every game install listed,
+       one absolute path per line, in AlterraWeaponry/game-dirs.txt (gitignored). -->
+  <Target Name="CopyToModsDir" AfterTargets="CopyLicense"
+          Condition="'$(Configuration)' == 'Debug' And Exists('game-dirs.txt')">
     <ReadLinesFromFile File="game-dirs.txt">
       <Output TaskParameter="Lines" ItemName="GameDirs" />
     </ReadLinesFromFile>
-    <CreateItem Include="bin/$(Configuration)/*">
-      <Output TaskParameter="Include" ItemName="TargetFiles" />
-    </CreateItem>
-    <CreateProperty Value="BepInEx/plugins/$(ProjectName)">
-      <Output TaskParameter="Value" PropertyName="PluginDir" />
-    </CreateProperty>
-    <Copy SourceFiles="@(TargetFiles)" DestinationFolder="%(GameDirs.Identity)/$(PluginDir)" />
-    <MakeDir Directories="%(GameDirs.Identity)/$(PluginDir)" />
+    <ItemGroup>
+      <DeployFiles Include="$(OutDir)**/*" />
+    </ItemGroup>
+    <MakeDir Directories="@(GameDirs->'%(Identity)/BepInEx/plugins/$(MSBuildProjectName)')" />
+    <!-- %(GameDirs.Identity) here batches the task once per listed install, passing
+         the whole DeployFiles set each time. The output folder is flat, so
+         DestinationFolder is enough. -->
+    <Copy SourceFiles="@(DeployFiles)"
+          DestinationFolder="%(GameDirs.Identity)/BepInEx/plugins/$(MSBuildProjectName)" />
   </Target>
-  <Target Name="ZipDist" AfterTargets="CopyToTargetDir" Condition="'$(Configuration)' == 'Release'">
-    <CreateItem Include="bin/$(Configuration)/**/*">
-      <Output TaskParameter="Include" ItemName="TargetFiles" />
-    </CreateItem>
-    <Copy SourceFiles="@(TargetFiles)" DestinationFolder="bin/built/$(ProjectName)" />
-    <MakeDir Directories="bin/built/$(ProjectName)/" />
-    <ZipDirectory SourceDirectory="bin/built" DestinationFile="bin/$(ProjectName).$(ConfigurationName).zip" Overwrite="True" />
+
+  <!-- Release/BZ/SN1: stage the plugin under its own folder and zip it for upload. -->
+  <Target Name="ZipDist" AfterTargets="CopyLicense"
+          Condition="'$(Configuration)' != 'Debug'">
+    <PropertyGroup>
+      <DistRoot>$(MSBuildThisFileDirectory)bin/dist/$(Configuration)</DistRoot>
+    </PropertyGroup>
+    <ItemGroup>
+      <DistFiles Include="$(OutDir)**/*" />
+    </ItemGroup>
+    <RemoveDir Directories="$(DistRoot)" />
+    <Copy SourceFiles="@(DistFiles)"
+          DestinationFiles="@(DistFiles->'$(DistRoot)/$(MSBuildProjectName)/%(RecursiveDir)%(Filename)%(Extension)')" />
+    <ZipDirectory SourceDirectory="$(DistRoot)"
+                  DestinationFile="$(MSBuildThisFileDirectory)bin/$(MSBuildProjectName).$(Configuration).zip"
+                  Overwrite="true" />
   </Target>
+
 </Project>

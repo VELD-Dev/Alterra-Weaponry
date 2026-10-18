@@ -1,6 +1,33 @@
 <Project>
- <PropertyGroup>
-	<!-- Subnautica root path below -->
-   <SubnauticaRootPath>B:\SteamLibrary\steamapps\common\SubnauticaZero</SubnauticaRootPath>
- </PropertyGroup>
+
+  <PropertyGroup>
+    <Configuration Condition="'$(Configuration)' == ''">Debug</Configuration>
+
+    <!--
+      Each configuration pulls a different set of game packages (BZ vs SN1), so each
+      one needs its own restore graph. NuGet writes project.assets.json and the
+      nuget.g.props/targets into MSBuildProjectExtensionsPath, which is normally
+      shared by every configuration: without this split, `dotnet build -c BZ`
+      followed by `dotnet build -c SN1` would reuse the wrong assets file and
+      compile against the other game's assemblies.
+
+      Only the restore graph is redirected, not BaseIntermediateOutputPath; the
+      latter would move obj/ out from under the SDK's default item excludes, and
+      each configuration's obj/ would then get globbed into the others' compile.
+
+      This must live in Directory.Build.props: by the time the .csproj body is
+      evaluated the SDK has already locked the path in.
+    -->
+    <MSBuildProjectExtensionsPath>$(MSBuildProjectDirectory)/obj/$(Configuration)/</MSBuildProjectExtensionsPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!--
+      CuddleLibs is not published to any NuGet feed, so it has to come off disk.
+      Drop CuddleLibs.dll into <repo>/libs/, or point this at your own copy:
+        dotnet build -c BZ -p:CuddleLibsPath=/path/to/CuddleLibs.dll
+    -->
+    <CuddleLibsPath Condition="'$(CuddleLibsPath)' == ''">$(MSBuildThisFileDirectory)libs/CuddleLibs.dll</CuddleLibsPath>
+  </PropertyGroup>
+
 </Project>

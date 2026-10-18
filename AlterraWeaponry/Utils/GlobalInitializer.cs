@@ -19,6 +19,17 @@ internal class GlobalInitializer
             Main.logger.LogInfo("Played PWAPresentation goal.");
         });
 
+        // Replaces the old Harmony postfix on uGUI_SceneLoading.End: the game dropped
+        // that method (along with Begin and IsLoading) after Below Zero build 49371,
+        // so the patch could no longer bind. A late load task runs at the tail of the
+        // loading sequence, which is the point the postfix used to fire at.
+        Nautilus.Handlers.WaitScreenHandler.RegisterLateLoadTask(Main.modName, task =>
+        {
+            Main.logger.LogInfo("Triggered LoadingScene end.");
+            Main.AWPresentationGoal.Trigger();
+            Main.logger.LogInfo("Should play or have played AWPresentationGoal.");
+        });
+
         Main.AWFirstLethal = Nautilus.Handlers.StoryGoalHandler.RegisterItemGoal("AWFirstLethal", Story.GoalType.PDA, ExplosiveTorpedo.TechType, 3f);
 
         Nautilus.Handlers.StoryGoalHandler.RegisterCustomEvent("AWFirstLethal", () =>
